@@ -1,10 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include "__defines.h"
 #include "value_unit.h"
 
-#define tffLoc char*
+#define tffLoc BTS
 
 
 TDF struct {
@@ -55,11 +53,11 @@ int tff_malloc(VU loc){
                 }
             }
             // No tffLoc, create new tffLoc and VU
-            if (RLC(tff_MEMORY.MEM[i].AREA, SZF(VU) * (tff_MEMORY.MEM[i].size_AREA+1))){
+            if (tff_MEMORY.MEM[i].AREA = (VU*)RLC(tff_MEMORY.MEM[i].AREA, SZF(VU) * (tff_MEMORY.MEM[i].size_AREA+1))){
                 tff_MEMORY.MEM[i].size_AREA++;
                 tff_MEMORY.MEM[i].AREA[tff_MEMORY.MEM[i].size_AREA-1].f_val = "N";
                 tff_MEMORY.MEM[i].AREA[tff_MEMORY.MEM[i].size_AREA-1].l_val = "N";
-                if (RLC(tff_MEMORY.MEM[i].tab_AREA, SZF(tffLoc) * tff_MEMORY.MEM[i].size_AREA)){
+                if (tff_MEMORY.MEM[i].tab_AREA = (tffLoc*)RLC(tff_MEMORY.MEM[i].tab_AREA, SZF(tffLoc) * tff_MEMORY.MEM[i].size_AREA)){
                     tff_MEMORY.MEM[i].tab_AREA[tff_MEMORY.MEM[i].size_AREA-1] = loc.l_val;
                     return 1;
                 }
@@ -69,7 +67,7 @@ int tff_malloc(VU loc){
         }
     }
     // No tffAREA, create new tffAREA, tffLoc, and VU
-    if (RLC(tff_MEMORY.MEM, SZF(tffAREA) * (tff_MEMORY.size_MEM+1))){
+    if (tff_MEMORY.MEM = (tffAREA*)RLC(tff_MEMORY.MEM, SZF(tffAREA) * (tff_MEMORY.size_MEM+1))){
         tff_MEMORY.size_MEM++;
         tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].name_AREA = loc.f_val;
         if (

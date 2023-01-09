@@ -1,4 +1,7 @@
+#include "BTS.h"
+
+
 typedef struct {
-    char* f_val;
-    char* l_val;
+    BTS f_val;
+    BTS l_val;
 }VU;

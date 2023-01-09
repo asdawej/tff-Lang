@@ -1,0 +1,40 @@
+main.c
+
+    "memory.h"[
+
+        <stdio.h>
+
+        <string.h>
+
+        "value_unit.h"[
+
+            "BTS.h"[
+
+                <stdlib.h>
+
+                "__defines.h"
+
+                BTS <- char*
+                Deci <- long
+            ]
+
+            VU{
+                BTS <- char*    f_val
+                BTS <- char*    l_val
+            }
+        ]
+
+        tffLoc <- BTS <- char*
+
+        tffAREA{
+            tffLoc <- char*     name_AREA
+            VU*                 AREA
+            size_t              size_AREA
+            tffLoc* <- char**   tab_AREA
+        }
+
+        tff_MEMORY = {
+            tffAREA*    MEM
+            size_t      size_MEM
+        }
+    ]
