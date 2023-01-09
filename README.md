@@ -26,7 +26,7 @@ _The C Implementation Details:_ The script is actually a `FILE*` that points to 
 ```C
 {
     "N",   // "N" as default; or the value in the config.tffc
-    "N"    // "N" as default; or the bytecode of the script
+    "N"    // "N" as default; or the BTS file position of script
 };
 ```
 
@@ -65,6 +65,12 @@ Our interpreter works with two files that are related to your codes - _config.tf
 
 ```PowerShell
 tff -r [main.tffl(*.tffl) path] [config.tffc(*.tffc) path]
+```
+
+or
+
+```PowerShell
+tff -r [main.tffl(*.tffl) path] default
 ```
 
 **_config.tffc_:**
