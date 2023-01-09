@@ -57,7 +57,7 @@ We use numbers to represent functions:
 | `3` | `00[VU1]10[VU2]11` | The memory of the location of `[VU1]` will be replaced by `[VU2]` |
 | `4` | `0[VU]1` | Run the script that linked with the location of `[VU]` |
 | `5` | `00[VU]10[[SS]...]11` | Link the script `[[SS]...]` to the location of `[VU]` so it can be run by `4` |
-| `6` | `00[VU]10[[SS1]...]10[[SS2]...]11` | Run `[[SS2]...]` if the real value of `[VU]` is `N`, else run `[[SS1]...]` |
+| `6` | `00[VU]10[[SS1]...]10[[SS2]...]11` | Run `[[SS1]...]` if the real value of `[VU]` is `T`, else run `[[SS2]...]` if the real value `F`, no running if `N` |
 
 ## Dependent Files
 
