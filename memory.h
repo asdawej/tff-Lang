@@ -21,7 +21,25 @@ static struct {
 } tff_MEMORY;
 
 
-int tff_INIT(void){}
+int tff_INIT(void){
+    if ((tff_MEMORY.MEM = (tffAREA*)MLC(SZF(tffAREA)))){
+        tff_MEMORY.size_MEM = 1;
+        tff_MEMORY.MEM[0].name_AREA = "N";
+        tff_MEMORY.MEM[0].size_AREA = 1;
+        if (
+            (tff_MEMORY.MEM[0].AREA = (VU*)MLC(SZF(VU))) &&
+            (tff_MEMORY.MEM[0].tab_AREA = (tffLoc*)MLC(SZF(tffLoc)))
+        ){
+            // (n, n) = [n, n]
+            tff_MEMORY.MEM[0].tab_AREA[0] = "N";
+            tff_MEMORY.MEM[0].AREA[0].f_val = "N";
+            tff_MEMORY.MEM[0].AREA[0].l_val = "N";
+            return 1;
+        }
+        else return 0;
+    }
+    else return 0;
+}
 
 
 int tff_malloc(VU loc){
