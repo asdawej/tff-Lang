@@ -19,6 +19,12 @@ static struct {
 } tff_MEMORY;
 
 
+// Functions Declarations
+int tff_INIT(void);
+int tff_malloc(VU);
+int tff_assign(VU, VU);
+
+
 int tff_INIT(void){
     if ((tff_MEMORY.MEM = (tffAREA*)MLC(SZF(tffAREA)))){
         tff_MEMORY.size_MEM = 1;
@@ -81,6 +87,26 @@ int tff_malloc(VU loc){
             return 1;
         }
         else return 0;
+    }
+    else return 0;
+}
+
+
+int tff_assign(VU val, VU loc){
+    if (tff_malloc(loc)){
+        for (RGS i = 0; i < tff_MEMORY.size_MEM; i++){
+            if (!strcmp(tff_MEMORY.MEM[i].name_AREA, loc.f_val)){
+                for (RGS j = 0; j < tff_MEMORY.MEM[i].size_AREA; i++){
+                    if (!strcmp(tff_MEMORY.MEM[i].tab_AREA[j], loc.l_val)){
+                        tff_MEMORY.MEM[i].AREA[j].f_val = val.f_val;
+                        tff_MEMORY.MEM[i].AREA[j].l_val = val.l_val;
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        }
+        return 0;
     }
     else return 0;
 }
