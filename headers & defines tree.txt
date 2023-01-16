@@ -15,7 +15,7 @@ main.c
                 "__defines.h"
 
                 BTS <- char*
-                Deci <- long
+                Deci <- long long
             ]
 
             VU{
