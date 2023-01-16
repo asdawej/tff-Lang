@@ -20,7 +20,9 @@ const char tff_FUNCTAB[] = {
 }; const int tff_FUNCTAB_size = 12;
 
 
+/*  tff interpreter main  */
 int main(int argc, char* argv[]){
+    if (!tff_INIT()) return -1;
     if (argc != 4) return -1;
     static FILE* rfp = NULL;
     if (!strcmp(argv[1], "-r")) rfp = FOPN(argv[2], "r");
@@ -38,11 +40,33 @@ int main(int argc, char* argv[]){
         }
     }
     FCLS(rfp); FCLS(wfp);
-    /*  TEST  */
+
+    /*  test  */
+
     wfp = FOPN(tff_CACHEFILE, "r");
     char s[100];
     FSCF(wfp, "%s", s);
     PRF("%s", s);
     FCLS(wfp);
+    return 0;
+}
+
+
+/*  internal test main  */
+int main1(){
+    tff_INIT();
+    VU loc = {
+        .f_val = "T",
+        .l_val = "TN"
+    };
+    VU val = {
+        .f_val = "F",
+        .l_val = "FN"
+    };
+    tff_assign(val, loc);
+    PRF("%s\t%s\n", tff_MEMORY.MEM[0].AREA[0].f_val, tff_MEMORY.MEM[0].AREA[0].l_val);
+    PRF("%s\t%s\n", tff_MEMORY.MEM[0].name_AREA, tff_MEMORY.MEM[0].tab_AREA[0]);
+    PRF("%s\t%s\n", tff_MEMORY.MEM[1].AREA[0].f_val, tff_MEMORY.MEM[1].AREA[0].l_val);
+    PRF("%s\t%s\n", tff_MEMORY.MEM[1].name_AREA, tff_MEMORY.MEM[1].tab_AREA[0]);
     return 0;
 }
