@@ -2,7 +2,7 @@
 #include "__defines.h"
 
 #define BTS char*
-#define Deci long
+#define Deci LL
 
 
 Deci BTS_unit_AsDeci(char unit){
