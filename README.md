@@ -88,7 +88,7 @@ The text file of your code.
 An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
 
 ```PowerShell
-50# [out: none. in: (ff, t)location 1, (ff, tn)location 2. memory: (fn, f)]
+50# [out: none. in: (ff, t)location one, (ff, tn)location two. memory: (fn, f)]
     0 0 FN 1 0 T 1 1
     0
         30# intermediate variable
@@ -99,7 +99,7 @@ An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
                 1
             1
         1
-        30# give value to location 1
+        30# give value to location one
             0
                 20 0 FF 1 0 T 1 1
             1
@@ -109,7 +109,7 @@ An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
                 1
             1
         1
-        30# give value to location 2
+        30# give value to location two
             0
                 20 0 FF 1 0 TN 1 1
             1
