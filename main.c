@@ -20,6 +20,42 @@ const char tff_FUNCTAB[] = {
 }; const int tff_FUNCTAB_size = 12;
 
 
+// tff_PROCESS_STACK[0] and tff_BREAKPOINT_STACK[0] store lengths.
+// In tff_PROCESS_STACK, there are {0, '2', '3', '4', '5', '6', '7', '8'}, and 0 is VU input flag.
+// In tff_BREAKPOINT_STACK, there are the positions to back.
+// tff_REGISTER is for VU input.
+static char tff_PROCESS_STACK[128] = {0};
+static size_t tff_BREAKPOINT_STACK[4096] = {0};
+static VU tff_REGISTER[2] = {
+    {
+        .f_val = "N",
+        .l_val = "N"
+    },
+    {
+        .f_val = "N",
+        .l_val = "N"
+    }
+};
+
+
+// Flags to determine what to do.
+static int tff_mode = 1;            // -1: Local run mode;  0: Record mode;     1: Run mode.
+static int tff_flag_args = -1;      // -1: not arg;         0: The first arg;   1: The second arg.
+static int tff_flag_flval = -1;     // -1: not arg;         0: The fval;        1: The lval.
+static int tff_flag_assert = -2;    // -1: False assert;    0: Null assert;     1: True;                -2: Not assert.
+static int tff_count_lrclose = 0;   // Used when tff_mode == 0; if it goes back to 0, tff_mode comes to -1 or 1.
+
+
+// Functions Declarations
+static void tff_meth_2(void);
+static void tff_meth_3(void);
+static void tff_meth_4(void);
+static void tff_meth_5(void);
+static void tff_meth_6(void);
+static void tff_meth_7(void);
+static void tff_meth_8(void);
+
+
 /*  tff interpreter main  */
 int main(int argc, char* argv[]){
     if (!tff_INIT()) return -1;
@@ -41,10 +77,8 @@ int main(int argc, char* argv[]){
     }
     FCLS(rfp); FCLS(wfp);
 
-    /*  test  */
-
     wfp = FOPN(tff_CACHEFILE, "r");
-    char s[100];
+    char s[300];
     FSCF(wfp, "%s", s);
     PRF("%s", s);
     FCLS(wfp);
@@ -52,21 +86,37 @@ int main(int argc, char* argv[]){
 }
 
 
-/*  internal test main  */
-int main1(){
-    tff_INIT();
-    VU loc = {
-        .f_val = "T",
-        .l_val = "TN"
-    };
-    VU val = {
-        .f_val = "F",
-        .l_val = "FN"
-    };
-    tff_assign(val, loc);
-    PRF("%s\t%s\n", tff_MEMORY.MEM[0].AREA[0].f_val, tff_MEMORY.MEM[0].AREA[0].l_val);
-    PRF("%s\t%s\n", tff_MEMORY.MEM[0].name_AREA, tff_MEMORY.MEM[0].tab_AREA[0]);
-    PRF("%s\t%s\n", tff_MEMORY.MEM[1].AREA[0].f_val, tff_MEMORY.MEM[1].AREA[0].l_val);
-    PRF("%s\t%s\n", tff_MEMORY.MEM[1].name_AREA, tff_MEMORY.MEM[1].tab_AREA[0]);
-    return 0;
+static void tff_meth_2(void){
+    tff_getval(&tff_REGISTER[tff_flag_args], tff_REGISTER[tff_flag_args]);
+}
+
+
+static void tff_meth_3(void){
+    tff_assign(tff_REGISTER[1], tff_REGISTER[0]);
+}
+
+
+static void tff_meth_4(void){
+
+}
+
+
+static void tff_meth_5(void){
+
+}
+
+
+static void tff_meth_6(void){
+
+}
+
+
+static void tff_meth_7(void){
+    VU temp;
+    
+}
+
+
+static void tff_meth_8(void){
+
 }

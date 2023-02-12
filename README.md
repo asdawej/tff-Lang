@@ -1,5 +1,7 @@
 # tff Language
 
+[![Security Status](https://s.murphysec.com/badge/asdawej/tff-Lang.svg)](https://www.murphysec.com/p/asdawej/tff-Lang)
+
 ```Python
 __author__ = 'asdawej'
 ```
@@ -58,6 +60,8 @@ We use numbers to represent functions:
 | `4` | `0[VU]1` | Run the script that linked with the location of `[VU]` |
 | `5` | `00[VU]10[[SS]...]11` | Link the script `[[SS]...]` to the location of `[VU]` so it can be run by `4` |
 | `6` | `00[VU]10[[SS1]...]10[[SS2]...]11` | Run `[[SS1]...]` if the real value of `[VU]` is `T` or more, else run `[[SS2]...]` if the real value `F` or less, no running if `N` |
+| `7`(test) | `0[VU]1` | Input and assign to the memory of the location of `[VU]` |
+| `8`(test) | `0[VU]1` | Output the memory of the location of `[VU]` |
 
 ## Dependent Files
 
@@ -125,4 +129,22 @@ An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
         1
     1
 1
+
+70 0 T 1 0 T 1 1
+70 0 T 1 0 TN 1 1
+80 0 T 1 0 T 1 1
+80 0 T 1 0 TN 1 1
+
+30# assign location one
+    0 0 FF 1 0 T 1 1
+    0 0 T 1 0 T 1 1
+1
+30# assign location two
+    0 0 FF 1 0 TN 1 1
+    0 0 T 1 0 TN 1 1
+1
+40 0 FN 1 0 T 1 1# run swap
+
+80 0 T 1 0 T 1 1
+80 0 T 1 0 TN 1 1
 ```

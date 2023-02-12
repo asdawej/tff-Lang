@@ -23,6 +23,8 @@ static struct {
 int tff_INIT(void);
 int tff_malloc(VU);
 int tff_assign(VU, VU);
+int tff_check(VU);
+int tff_getval(VU*, VU);
 
 
 int tff_INIT(void){
@@ -96,7 +98,7 @@ int tff_assign(VU val, VU loc){
     if (tff_malloc(loc)){
         for (RGS i = 0; i < tff_MEMORY.size_MEM; i++){
             if (!strcmp(tff_MEMORY.MEM[i].name_AREA, loc.f_val)){
-                for (RGS j = 0; j < tff_MEMORY.MEM[i].size_AREA; i++){
+                for (RGS j = 0; j < tff_MEMORY.MEM[i].size_AREA; j++){
                     if (!strcmp(tff_MEMORY.MEM[i].tab_AREA[j], loc.l_val)){
                         tff_MEMORY.MEM[i].AREA[j].f_val = val.f_val;
                         tff_MEMORY.MEM[i].AREA[j].l_val = val.l_val;
@@ -109,4 +111,42 @@ int tff_assign(VU val, VU loc){
         return 0;
     }
     else return 0;
+}
+
+
+int tff_check(VU loc){
+    for (RGS i = 0; i < tff_MEMORY.size_MEM; i++){
+        if (!strcmp(tff_MEMORY.MEM[i].name_AREA, loc.f_val)){
+            for (RGS j = 0; j < tff_MEMORY.MEM[i].size_AREA; j++){
+                if (!strcmp(tff_MEMORY.MEM[i].tab_AREA[j], loc.l_val)){
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    }
+    return 0;
+}
+
+
+int tff_getval(VU* target, VU loc){
+    if (tff_check(loc)){
+        for (RGS i = 0; i < tff_MEMORY.size_MEM; i++){
+            if (!strcmp(tff_MEMORY.MEM[i].name_AREA, loc.f_val)){
+                for (RGS j = 0; j < tff_MEMORY.MEM[i].size_AREA; j++){
+                    if (!strcmp(tff_MEMORY.MEM[i].tab_AREA[j], loc.l_val)){
+                        target->f_val = tff_MEMORY.MEM[i].AREA[j].f_val;
+                        target->l_val = tff_MEMORY.MEM[i].AREA[j].l_val;
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        }
+        return 0;
+    }
+    else{
+        tff_malloc(loc);
+        return tff_getval(target, loc);
+    }
 }
