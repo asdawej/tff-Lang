@@ -113,10 +113,46 @@ static void tff_meth_6(void){
 
 static void tff_meth_7(void){
     VU temp;
-    
+    char c;
+    _INPUT_f:
+        temp.f_val = (BTS)MLC(1); temp.f_val[0] = '\0';
+        size_t _fsave = 0;
+        PRF("Input fval:");
+        while ((c = GCR()) != '\n'){
+            if ((c != 'T') && (c != 'N') && (c != 'F')){
+                free(temp.f_val);
+                fflush(stdin);
+                goto _INPUT_f;
+            }
+            temp.f_val[_fsave] = c;
+            if (temp.f_val = (BTS)RLC(temp.f_val, (++_fsave)+1)){
+                temp.f_val[_fsave] = '\0';
+            }
+            else exit(-1);
+        }
+    _INPUT_l:
+        temp.l_val = (BTS)MLC(1); temp.l_val[0] = '\0';
+        size_t _lsave = 0;
+        PRF("Input lval:");
+        while ((c = GCR()) != '\n'){
+            if ((c != 'T') && (c != 'N') && (c != 'F')){
+                free(temp.l_val);
+                fflush(stdin);
+                goto _INPUT_l;
+            }
+            temp.l_val[_lsave] = c;
+            if (temp.l_val = (BTS)RLC(temp.l_val, (++_lsave)+1)){
+                temp.l_val[_lsave] = '\0';
+            }
+            else exit(-1);
+        }
+    tff_assign(temp, tff_REGISTER[0]);
 }
 
 
 static void tff_meth_8(void){
-
+    VU temp;
+    tff_getval(&temp, tff_REGISTER[0]);
+    PRF("Output fval:%s\n", temp.f_val);
+    PRF("Output lval:%s\n", temp.l_val);
 }
