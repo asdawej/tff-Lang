@@ -2,7 +2,7 @@
 
 
 static const char tff_CACHEFILE[] = "__tff_cache__.tffb";
-static const char tff_FUNCFVAL[] = "N";
+static const char tff_TYPE_FUNC[] = "N";
 
 
 const char tff_FUNCTAB[] = {
@@ -81,9 +81,7 @@ int main(int argc, char* argv[]){
     FCLS(rfp); FCLS(wfp);
 
     rfp = FOPN(tff_CACHEFILE, "r");
-    char s[300];
-    FSCF(rfp, "%s", s);
-    PRF("%s", s);
+    tff_run(rfp);
     FCLS(rfp);
     return 0;
 }
@@ -111,7 +109,7 @@ static void tff_meth_4(FILE* rfp){
 
 static void tff_meth_5(FILE* rfp){
     VU temp = {
-        .f_val = tff_FUNCFVAL,
+        .f_val = tff_TYPE_FUNC,
         .l_val = BTS_FromDeci(tff_BREAKPOINT_STACK[tff_BREAKPOINT_STACK[0]])
     };
     tff_assign(temp, tff_REGISTER[0]);
@@ -121,6 +119,20 @@ static void tff_meth_5(FILE* rfp){
 
 
 static void tff_meth_6(FILE* rfp){
+    if (tff_REGISTER[0].l_val[0] == 'T'){
+        tff_BREAKPOINT_STACK[0]--;
+        tff_local(rfp);
+    }
+    else if (tff_REGISTER[0].l_val[0] == 'F'){
+        tff_BREAKPOINT_STACK[tff_BREAKPOINT_STACK[0]-1] = tff_BREAKPOINT_STACK[tff_BREAKPOINT_STACK[0]];
+        tff_BREAKPOINT_STACK[0]--;
+        tff_local(rfp);
+    }
+    else if (tff_REGISTER[0].l_val[0] == 'N'){
+        tff_BREAKPOINT_STACK[0]--;
+    }
+    else exit(-2);
+    tff_BREAKPOINT_STACK[0]--;
     tff_PROCESS_STACK[0]--;
 }
 
@@ -160,6 +172,8 @@ static void tff_meth_7(void){
             }
             else exit(-1);
         }
+    temp.f_val = BTS_Simpl(temp.f_val);
+    temp.l_val = BTS_Simpl(temp.l_val);
     tff_assign(temp, tff_REGISTER[0]);
     tff_PROCESS_STACK[0]--;
 }
