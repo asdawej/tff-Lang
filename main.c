@@ -2,6 +2,7 @@
 
 
 static const char tff_CACHEFILE[] = "__tff_cache__.tffb";
+static const char tff_FUNCFVAL[] = "N";
 
 
 const char tff_FUNCTAB[] = {
@@ -25,7 +26,7 @@ const char tff_FUNCTAB[] = {
 // In tff_BREAKPOINT_STACK, there are the positions to back.
 // tff_REGISTER is for VU input.
 static char tff_PROCESS_STACK[128] = {0};
-static size_t tff_BREAKPOINT_STACK[4096] = {0};
+static fpos_t tff_BREAKPOINT_STACK[4096] = {0};
 static VU tff_REGISTER[2] = {
     {
         .f_val = "N",
@@ -49,11 +50,13 @@ static int tff_count_lrclose = 0;   // Used when tff_mode == 0; if it goes back 
 // Functions Declarations
 static void tff_meth_2(void);
 static void tff_meth_3(void);
-static void tff_meth_4(void);
-static void tff_meth_5(void);
-static void tff_meth_6(void);
+static void tff_meth_4(FILE*);
+static void tff_meth_5(FILE*);
+static void tff_meth_6(FILE*);
 static void tff_meth_7(void);
 static void tff_meth_8(void);
+static void tff_run(FILE*);
+static void tff_local(FILE*);
 
 
 /*  tff interpreter main  */
@@ -77,37 +80,48 @@ int main(int argc, char* argv[]){
     }
     FCLS(rfp); FCLS(wfp);
 
-    wfp = FOPN(tff_CACHEFILE, "r");
+    rfp = FOPN(tff_CACHEFILE, "r");
     char s[300];
-    FSCF(wfp, "%s", s);
+    FSCF(rfp, "%s", s);
     PRF("%s", s);
-    FCLS(wfp);
+    FCLS(rfp);
     return 0;
 }
 
 
 static void tff_meth_2(void){
     tff_getval(&tff_REGISTER[tff_flag_args], tff_REGISTER[tff_flag_args]);
+    tff_PROCESS_STACK[0]--;
 }
 
 
 static void tff_meth_3(void){
     tff_assign(tff_REGISTER[1], tff_REGISTER[0]);
+    tff_PROCESS_STACK[0]--;
 }
 
 
-static void tff_meth_4(void){
-
+static void tff_meth_4(FILE* rfp){
+    fgetpos(rfp, &tff_BREAKPOINT_STACK[++tff_BREAKPOINT_STACK[0]]);
+    fpos_t temp = BTS_AsDeci(tff_REGISTER[0].l_val); fsetpos(rfp, &temp);
+    tff_local(rfp);
+    tff_PROCESS_STACK[0]--;
 }
 
 
-static void tff_meth_5(void){
-
+static void tff_meth_5(FILE* rfp){
+    VU temp = {
+        .f_val = tff_FUNCFVAL,
+        .l_val = BTS_FromDeci(tff_BREAKPOINT_STACK[tff_BREAKPOINT_STACK[0]])
+    };
+    tff_assign(temp, tff_REGISTER[0]);
+    tff_BREAKPOINT_STACK[0]--;
+    tff_PROCESS_STACK[0]--;
 }
 
 
-static void tff_meth_6(void){
-
+static void tff_meth_6(FILE* rfp){
+    tff_PROCESS_STACK[0]--;
 }
 
 
@@ -117,7 +131,7 @@ static void tff_meth_7(void){
     _INPUT_f:
         temp.f_val = (BTS)MLC(1); temp.f_val[0] = '\0';
         size_t _fsave = 0;
-        PRF("Input fval:");
+        PRF("Input fval: ");
         while ((c = GCR()) != '\n'){
             if ((c != 'T') && (c != 'N') && (c != 'F')){
                 free(temp.f_val);
@@ -133,7 +147,7 @@ static void tff_meth_7(void){
     _INPUT_l:
         temp.l_val = (BTS)MLC(1); temp.l_val[0] = '\0';
         size_t _lsave = 0;
-        PRF("Input lval:");
+        PRF("Input lval: ");
         while ((c = GCR()) != '\n'){
             if ((c != 'T') && (c != 'N') && (c != 'F')){
                 free(temp.l_val);
@@ -147,12 +161,20 @@ static void tff_meth_7(void){
             else exit(-1);
         }
     tff_assign(temp, tff_REGISTER[0]);
+    tff_PROCESS_STACK[0]--;
 }
 
 
 static void tff_meth_8(void){
     VU temp;
     tff_getval(&temp, tff_REGISTER[0]);
-    PRF("Output fval:%s\n", temp.f_val);
-    PRF("Output lval:%s\n", temp.l_val);
+    PRF("Output fval: %s\n", temp.f_val);
+    PRF("Output lval: %s\n", temp.l_val);
+    tff_PROCESS_STACK[0]--;
 }
+
+
+static void tff_run(FILE* rfp){}
+
+
+static void tff_local(FILE* rfp){}
