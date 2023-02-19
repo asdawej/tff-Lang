@@ -38,3 +38,5 @@ main.c
             size_t      size_MEM
         }
     ]
+
+    "__assist.h"
