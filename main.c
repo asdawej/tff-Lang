@@ -47,6 +47,7 @@ static VU tff_REGISTER[2] = {
 //     to locate them in the tff_REGISTER or tff_BREAKPOINT_STACK.
 static int tff_flag_args = 0;       //                      0: Not args;        1: Args.
 static int tff_flag_argindex = -1;  // -1: not arg;         0: The first arg;   1: The second arg   2: The third arg.
+static int tff_flag_argval = 0;     //                      0: Not vals;        1: Vals.
 static int tff_flag_flval = -1;     // -1: not arg;         0: The fval;        1: The lval.
 static int tff_count_lrclose = 0;   // To count if 0-1 pair is closed to check whether a section of code is over.
 static size_t tff_count_val = 0;    // To count the number of f_val/l_val.
@@ -206,6 +207,7 @@ static void tff_run(FILE* rfp){
                 goto _RUN_LOOP_END;
             }
         }
+
         // In 2 field
         if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '2'){
             if (c == '0'){
@@ -239,41 +241,112 @@ static void tff_run(FILE* rfp){
                 if (tff_flag_flval == 0){
                     if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)RLC(tff_REGISTER[tff_flag_argindex].f_val, ++tff_count_val)){
                         tff_REGISTER[tff_flag_argindex].f_val[tff_count_val-2] = c;
+                        tff_REGISTER[tff_flag_argindex].f_val[tff_count_val-1] = '\0';
                     }
                     else exit(-1);
                 }
                 else if (tff_flag_flval == 1){
                     if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)RLC(tff_REGISTER[tff_flag_argindex].l_val, ++tff_count_val)){
                         tff_REGISTER[tff_flag_argindex].l_val[tff_count_val-2] = c;
+                        tff_REGISTER[tff_flag_argindex].l_val[tff_count_val-1] = '\0';
                     }
                     else exit(-1);
                 }
             }
         }
+
         // In 3 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '3'){
-
+            if (c == '0'){
+                // Start args
+                if (tff_flag_args == 0){
+                    tff_flag_args = 1;
+                }
+                else{
+                    // Start arg input
+                    if (tff_flag_argval == 0){
+                        tff_flag_argval = 1;
+                        tff_flag_argindex++;
+                    }
+                    // Start to extract f_val/l_val
+                    else{
+                        tff_flag_flval++;
+                        if (tff_flag_flval == 0){
+                            if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(1)){
+                                tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
+                                tff_count_val = 1;
+                            }
+                            else exit(-1);
+                        }
+                        else if (tff_flag_flval == 1){
+                            if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(1)){
+                                tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
+                                tff_count_val = 1;
+                            }
+                            else exit(-1);
+                        }
+                    }
+                }
+            }
+            else if (c == '1'){
+                // End args
+                if (tff_flag_argindex == 1 && tff_flag_argval == 0){
+                    tff_flag_args = 0;
+                    tff_flag_argindex = -1;
+                    tff_meth_3();
+                }
+                else{
+                    // End arg input
+                    if (forechar(rfp) == '1'){
+                        tff_flag_flval = -1;
+                        tff_flag_argval = 0;
+                    }
+                }
+            }
+            // Extract f_val/l_val
+            else if (c == 'T' || c == 'N' || c == 'F'){
+                if (tff_flag_flval == 0){
+                    if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)RLC(tff_REGISTER[tff_flag_argindex].f_val, ++tff_count_val)){
+                        tff_REGISTER[tff_flag_argindex].f_val[tff_count_val-2] = c;
+                        tff_REGISTER[tff_flag_argindex].f_val[tff_count_val-1] = '\0';
+                    }
+                    else exit(-1);
+                }
+                else if (tff_flag_flval == 1){
+                    if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)RLC(tff_REGISTER[tff_flag_argindex].l_val, ++tff_count_val)){
+                        tff_REGISTER[tff_flag_argindex].l_val[tff_count_val-2] = c;
+                        tff_REGISTER[tff_flag_argindex].l_val[tff_count_val-1] = '\0';
+                    }
+                    else exit(-1);
+                }
+            }
         }
+
         // In 4 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '4'){
             
         }
+
         // In 5 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '5'){
             
         }
+
         // In 6 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '6'){
             
         }
+
         // In 7 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '7'){
             
         }
+
         // In 8 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '8'){
             
         }
+
         _RUN_LOOP_END:
     }
 }
