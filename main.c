@@ -322,9 +322,56 @@ static void tff_run(FILE* rfp){
             }
         }
 
-        // In 4 field
-        else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '4'){
-            
+        // In 4/7/8 field
+        else if (
+            tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '4' ||
+            tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '7' ||
+            tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '8'
+        ){
+            if (c == '0'){
+                // Start args & arg input
+                if (tff_flag_args == 0){
+                    tff_flag_args = 1;
+                    tff_flag_argval = 1;
+                    tff_flag_argindex++;
+                }
+                // Start to extract f_val/l_val
+                else{
+                    tff_flag_flval++;
+                    if (tff_flag_flval == 0){
+                        if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(1)){
+                            tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
+                            tff_count_val = 1;
+                        }
+                        else exit(-1);
+                    }
+                    else if (tff_flag_flval == 1){
+                        if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(1)){
+                            tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
+                            tff_count_val = 1;
+                        }
+                        else exit(-1);
+                    }
+                }
+            }
+            else if (c == '1'){
+                // End args & arg input
+                if (forechar(rfp) == '1'){
+                    tff_flag_args = 0;
+                    tff_flag_argindex = -1;
+                    tff_flag_argval = 0;
+                    tff_flag_flval = -1;
+                    if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '4'){
+                        tff_meth_4(rfp);
+                    }
+                    else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '7'){
+                        tff_meth_7();
+                    }
+                    else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '8'){
+                        tff_meth_8();
+                    }
+                }
+            }
         }
 
         // In 5 field
@@ -334,16 +381,6 @@ static void tff_run(FILE* rfp){
 
         // In 6 field
         else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '6'){
-            
-        }
-
-        // In 7 field
-        else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '7'){
-            
-        }
-
-        // In 8 field
-        else if (tff_PROCESS_STACK[tff_PROCESS_STACK[0]] == '8'){
             
         }
 
