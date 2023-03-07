@@ -19,6 +19,10 @@ static struct {
 } tff_MEMORY;
 
 
+const size_t SZ_tffAREA = SZF(tffAREA);
+const size_t SZ_tffLoc = SZF(tffLoc);
+
+
 // Functions Declarations
 int tff_INIT(void);
 int tff_malloc(VU);
@@ -28,13 +32,13 @@ int tff_getval(VU*, VU);
 
 
 int tff_INIT(void){
-    if ((tff_MEMORY.MEM = (tffAREA*)MLC(SZF(tffAREA)))){
+    if ((tff_MEMORY.MEM = (tffAREA*)MLC(SZ_tffAREA))){
         tff_MEMORY.size_MEM = 1;
         tff_MEMORY.MEM[0].name_AREA = "N";
         tff_MEMORY.MEM[0].size_AREA = 1;
         if (
-            (tff_MEMORY.MEM[0].AREA = (VU*)MLC(SZF(VU))) &&
-            (tff_MEMORY.MEM[0].tab_AREA = (tffLoc*)MLC(SZF(tffLoc)))
+            (tff_MEMORY.MEM[0].AREA = (VU*)MLC(SZ_VU)) &&
+            (tff_MEMORY.MEM[0].tab_AREA = (tffLoc*)MLC(SZ_tffLoc))
         ){
             // (n, n) = [n, n]
             tff_MEMORY.MEM[0].tab_AREA[0] = "N";
@@ -61,11 +65,11 @@ int tff_malloc(VU loc){
                 }
             }
             // No tffLoc, create new tffLoc and VU
-            if (tff_MEMORY.MEM[i].AREA = (VU*)RLC(tff_MEMORY.MEM[i].AREA, SZF(VU) * (tff_MEMORY.MEM[i].size_AREA+1))){
+            if (tff_MEMORY.MEM[i].AREA = (VU*)RLC(tff_MEMORY.MEM[i].AREA, SZ_VU * (tff_MEMORY.MEM[i].size_AREA+1))){
                 tff_MEMORY.MEM[i].size_AREA++;
                 tff_MEMORY.MEM[i].AREA[tff_MEMORY.MEM[i].size_AREA-1].f_val = "N";
                 tff_MEMORY.MEM[i].AREA[tff_MEMORY.MEM[i].size_AREA-1].l_val = "N";
-                if (tff_MEMORY.MEM[i].tab_AREA = (tffLoc*)RLC(tff_MEMORY.MEM[i].tab_AREA, SZF(tffLoc) * tff_MEMORY.MEM[i].size_AREA)){
+                if (tff_MEMORY.MEM[i].tab_AREA = (tffLoc*)RLC(tff_MEMORY.MEM[i].tab_AREA, SZ_tffLoc * tff_MEMORY.MEM[i].size_AREA)){
                     tff_MEMORY.MEM[i].tab_AREA[tff_MEMORY.MEM[i].size_AREA-1] = loc.l_val;
                     return 1;
                 }
@@ -75,12 +79,12 @@ int tff_malloc(VU loc){
         }
     }
     // No tffAREA, create new tffAREA, tffLoc, and VU
-    if (tff_MEMORY.MEM = (tffAREA*)RLC(tff_MEMORY.MEM, SZF(tffAREA) * (tff_MEMORY.size_MEM+1))){
+    if (tff_MEMORY.MEM = (tffAREA*)RLC(tff_MEMORY.MEM, SZ_tffAREA * (tff_MEMORY.size_MEM+1))){
         tff_MEMORY.size_MEM++;
         tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].name_AREA = loc.f_val;
         if (
-            (tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].AREA = (VU*)MLC(SZF(VU))) &&
-            (tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].tab_AREA = (tffLoc*)MLC(SZF(tffLoc)))
+            (tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].AREA = (VU*)MLC(SZ_VU)) &&
+            (tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].tab_AREA = (tffLoc*)MLC(SZ_tffLoc))
         ){
             tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].size_AREA = 1;
             tff_MEMORY.MEM[tff_MEMORY.size_MEM-1].AREA[0].f_val = "N";

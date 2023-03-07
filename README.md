@@ -1,4 +1,4 @@
-# tff Language
+# tff Language - v1.0.0 - alpha
 
 [![Security Status](https://s.murphysec.com/badge/asdawej/tff-Lang.svg)](https://www.murphysec.com/p/asdawej/tff-Lang)
 
@@ -6,7 +6,7 @@
 __author__ = 'asdawej'
 ```
 
-- [tff Language](#tff-language)
+- [tff Language - v1.0.0 - alpha](#tff-language---v100---alpha)
   - [Basic Concepts](#basic-concepts)
   - [Dependent Files](#dependent-files)
   - [Examples](#examples)
@@ -60,12 +60,12 @@ We use numbers to represent functions:
 | `4` | `0[VU]1` | Run the script that linked with the location of `[VU]` |
 | `5` | `00[VU]10[[SS]...]11` | Link the script `[[SS]...]` to the location of `[VU]` so it can be run by `4` |
 | `6` | `00[VU]10[[SS1]...]10[[SS2]...]11` | Run `[[SS1]...]` if the real value of `[VU]` is `T` or more, else run `[[SS2]...]` if the real value `F` or less, no running if `N` |
-| `7`(test) | `0[VU]1` | Input and assign to the memory of the location of `[VU]` |
-| `8`(test) | `0[VU]1` | Output the memory of the location of `[VU]` |
+| `7` | `0[VU]1` | Input and assign to the memory of the location of `[VU]` |
+| `8` | `0[VU]1` | Output the memory of the location of `[VU]` |
 
 ## Dependent Files
 
-Our interpreter works with two files that are related to your codes - _config.tffc_ and _main.tffl_. To run a tff script, you should input the code below to cmd:
+Our interpreter works with two files that are related to your codes - _config.tffc_ and _main.tffl_. To run a tff script, you should input the code below to cmd:(_future_)
 
 ```PowerShell
 tff -r [main.tffl(*.tffl) path] [config.tffc(*.tffc) path]
@@ -77,7 +77,7 @@ or
 tff -r [main.tffl(*.tffl) path] default
 ```
 
-**_config.tffc_:**
+**_config.tffc_:**(_future_)
 The text file that stores the environment variables, default values, and initial values.
 
 If you just want to write a simple tff script, than you can just use our default _config.tffc_.
@@ -118,9 +118,7 @@ An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
                 20 0 FF 1 0 TN 1 1
             1
             0
-                20
-                    20 0 FN 1 0 F 1 1
-                1
+                20 0 FN 1 0 F 1 1
             1
         1
         30# clear intermediate variable

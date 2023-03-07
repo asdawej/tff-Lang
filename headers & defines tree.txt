@@ -16,12 +16,16 @@ main.c
 
                 BTS <- char*
                 Deci <- long long
+
+                const size_t SZ_char
             ]
 
             VU{
                 BTS <- char*    f_val
                 BTS <- char*    l_val
             }
+
+            const size_t SZ_VU
         ]
 
         tffLoc <- BTS <- char*
@@ -37,6 +41,9 @@ main.c
             tffAREA*    MEM
             size_t      size_MEM
         }
+
+        const size_t SZ_tffAREA
+        const size_t SZ_tffLoc
     ]
 
     "__assist.h"

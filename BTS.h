@@ -4,6 +4,8 @@
 #define BTS char*
 #define Deci LL
 
+const size_t SZ_char = SZF(char);
+
 
 Deci BTS_unit_AsDeci(char unit){
     switch (unit){
@@ -30,12 +32,12 @@ BTS BTS_FromDeci(Deci Deci_val){
         return "N";
     }
     else if (Deci_val > 0){
-        BTS ret = (BTS)MLC(SZF(char));
+        BTS ret = (BTS)MLC(SZ_char);
         ret[0] = '\0';
         LL length = 1;
         Deci m;
         while ((m = Deci_val/2) >= 1){
-            if (ret = (BTS)RLC(ret, SZF(char) * (++length))){
+            if (ret = (BTS)RLC(ret, SZ_char * (++length))){
                 for (RG LL i = length-2; i >= 0; i--){
                     ret[i+1] = ret[i];
                 }
@@ -47,7 +49,7 @@ BTS BTS_FromDeci(Deci Deci_val){
             }
             else return NULL;
         }
-        if (ret = (BTS)RLC(ret, SZF(char) * (++length))){
+        if (ret = (BTS)RLC(ret, SZ_char * (++length))){
             for (RG LL i = length-2; i >= 0; i--){
                 ret[i+1] = ret[i];
             }
