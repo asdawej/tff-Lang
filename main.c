@@ -18,12 +18,13 @@ const char tff_FUNCTAB[] = {
     '5',// Link
     '6',// Assert
     '7',// Input
-    '8' // Output
-}; const int tff_FUNCTAB_size = 12;
+    '8',// Output
+    '9' // Add
+}; const int tff_FUNCTAB_size = 13;
 
 
 // tff_PROCESS_STACK[0] and tff_BREAKPOINT_STACK[0] store lengths.
-// In tff_PROCESS_STACK, there are {0, '2', '3', '4', '5', '6', '7', '8'}.
+// In tff_PROCESS_STACK, there are {0, '2', '3', '4', '5', '6', '7', '8', '9'}.
 // tff_PROCESS_STACK {0} is used for tff_local.
 // In tff_BREAKPOINT_STACK, there are the positions to store.
 // tff_REGISTER is for VU input.
@@ -61,6 +62,7 @@ static void tff_meth_5(FILE*);
 static void tff_meth_6(FILE*);
 static void tff_meth_7(void);
 static void tff_meth_8(void);
+static void tff_meth_9(void);
 static void tff_run(FILE*);
 static void tff_local(FILE*);
 static void tff_record(FILE*);
@@ -69,10 +71,11 @@ static void tff_record(FILE*);
 // Internal Execution Bodies Declarations
 static int _tff_exec_push_stack(char);
 static void _tff_exec_field_2(FILE*, char);
-static void _tff_exec_field_3(FILE*, char);
+static void _tff_exec_field_39(FILE*, char);
 static void _tff_exec_field_478(FILE*, char);
 static void _tff_exec_field_5(FILE*, char);
 static void _tff_exec_field_6(FILE*, char);
+static void _tff_exec_start_flval(void);
 static void _tff_exec_extract_flval(char);
 
 
@@ -99,6 +102,7 @@ int main(int argc, char* argv[]){
     rfp = FOPN(tff_CACHEFILE, "r");
     tff_run(rfp);
     FCLS(rfp);
+    system("pause");
     return 0;
 }
 
@@ -208,6 +212,18 @@ static void tff_meth_8(void){
 }
 
 
+static void tff_meth_9(void){
+    VU temp; Deci temp_f, temp_l;
+    tff_getval(&temp, tff_REGISTER[0]);
+    temp_f = BTS_AsDeci(temp.f_val)+BTS_AsDeci(tff_REGISTER[1].f_val);
+    temp_l = BTS_AsDeci(temp.l_val)+BTS_AsDeci(tff_REGISTER[1].l_val);
+    temp.f_val = BTS_FromDeci(temp_f);
+    temp.l_val = BTS_FromDeci(temp_l);
+    tff_assign(temp, tff_REGISTER[0]);
+    tff_PROCESS_STACK[0]--; // Pop stack
+}
+
+
 static void tff_run(FILE* rfp){
     char c;
     while ((c = fgetc(rfp)) != EOF){
@@ -216,7 +232,8 @@ static void tff_run(FILE* rfp){
 
         switch (tff_PROCESS_STACK[tff_PROCESS_STACK[0]]){
             case '2': _tff_exec_field_2(rfp, c); break;
-            case '3': _tff_exec_field_3(rfp, c); break;
+            case '3':
+            case '9': _tff_exec_field_39(rfp, c); break;
             case '4':
             case '7':
             case '8': _tff_exec_field_478(rfp, c); break;
@@ -238,7 +255,8 @@ static void tff_local(FILE* rfp){
 
         switch (tff_PROCESS_STACK[tff_PROCESS_STACK[0]]){
             case '2': _tff_exec_field_2(rfp, c); break;
-            case '3': _tff_exec_field_3(rfp, c); break;
+            case '3':
+            case '9': _tff_exec_field_39(rfp, c); break;
             case '4':
             case '7':
             case '8': _tff_exec_field_478(rfp, c); break;
@@ -287,21 +305,7 @@ static void _tff_exec_field_2(FILE* rfp, char c){
     if (c == '0'){
         // Start to extract f_val/l_val
         if (forechar(rfp) != '2'){
-            tff_flag_flval++;
-            if (tff_flag_flval == 0){
-                if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(SZ_char)){
-                    tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
-                    tff_count_val = 1;
-                }
-                else exit(-1);
-            }
-            else if (tff_flag_flval == 1){
-                if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(SZ_char)){
-                    tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
-                    tff_count_val = 1;
-                }
-                else exit(-1);
-            }
+            _tff_exec_start_flval();
         }
     }
     else if (c == '1'){
@@ -317,7 +321,7 @@ static void _tff_exec_field_2(FILE* rfp, char c){
 }
 
 
-static void _tff_exec_field_3(FILE* rfp, char c){
+static void _tff_exec_field_39(FILE* rfp, char c){
     if (c == '0'){
         // Start args
         if (tff_flag_args == 0){
@@ -330,23 +334,7 @@ static void _tff_exec_field_3(FILE* rfp, char c){
                 tff_flag_argindex++;
             }
             // Start to extract f_val/l_val
-            else{
-                tff_flag_flval++;
-                if (tff_flag_flval == 0){
-                    if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(SZ_char)){
-                        tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
-                        tff_count_val = 1;
-                    }
-                    else exit(-1);
-                }
-                else if (tff_flag_flval == 1){
-                    if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(SZ_char)){
-                        tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
-                        tff_count_val = 1;
-                    }
-                    else exit(-1);
-                }
-            }
+            else _tff_exec_start_flval();
         }
     }
     else if (c == '1'){
@@ -354,7 +342,11 @@ static void _tff_exec_field_3(FILE* rfp, char c){
         if (tff_flag_argindex == 1 && tff_flag_argval == 0){
             tff_flag_args = 0;
             tff_flag_argindex = -1;
-            tff_meth_3();
+            switch (tff_PROCESS_STACK[tff_PROCESS_STACK[0]]){
+                case '3': tff_meth_3(); break;
+                case '9': tff_meth_9();
+                default: break;
+            }
         }
         else{
             // End arg input
@@ -380,23 +372,7 @@ static void _tff_exec_field_478(FILE* rfp, char c){
             tff_flag_argindex++;
         }
         // Start to extract f_val/l_val
-        else{
-            tff_flag_flval++;
-            if (tff_flag_flval == 0){
-                if (tff_REGISTER[0].f_val = (BTS)MLC(SZ_char)){
-                    tff_REGISTER[0].f_val[0] = '\0';
-                    tff_count_val = 1;
-                }
-                else exit(-1);
-            }
-            else if (tff_flag_flval == 1){
-                if (tff_REGISTER[0].l_val = (BTS)MLC(SZ_char)){
-                    tff_REGISTER[0].l_val[0] = '\0';
-                    tff_count_val = 1;
-                }
-                else exit(-1);
-            }
-        }
+        else _tff_exec_start_flval();
     }
     else if (c == '1'){
         // End args & arg input
@@ -440,23 +416,7 @@ static void _tff_exec_field_5(FILE* rfp, char c){
                 }
             }
             // Start to extract f_val/l_val
-            else{
-                tff_flag_flval++;
-                if (tff_flag_flval == 0){
-                    if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(SZ_char)){
-                        tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
-                        tff_count_val = 1;
-                    }
-                    else exit(-1);
-                }
-                else if (tff_flag_flval == 1){
-                    if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(SZ_char)){
-                        tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
-                        tff_count_val = 1;
-                    }
-                    else exit(-1);
-                }
-            }
+            else _tff_exec_start_flval();
         }
     }
     else if (c == '1'){
@@ -501,23 +461,7 @@ static void _tff_exec_field_6(FILE* rfp, char c){
                 }
             }
             // Start to extract f_val/l_val
-            else{
-                tff_flag_flval++;
-                if (tff_flag_flval == 0){
-                    if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(SZ_char)){
-                        tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
-                        tff_count_val = 1;
-                    }
-                    else exit(-1);
-                }
-                else if (tff_flag_flval == 1){
-                    if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(SZ_char)){
-                        tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
-                        tff_count_val = 1;
-                    }
-                    else exit(-1);
-                }
-            }
+            else _tff_exec_start_flval();
         }
     }
     else if (c == '1'){
@@ -538,6 +482,25 @@ static void _tff_exec_field_6(FILE* rfp, char c){
     // Extract f_val/l_val
     else if (c == 'T' || c == 'N' || c == 'F'){
         _tff_exec_extract_flval(c);
+    }
+}
+
+
+static void _tff_exec_start_flval(void){
+    tff_flag_flval++;
+    if (tff_flag_flval == 0){
+        if (tff_REGISTER[tff_flag_argindex].f_val = (BTS)MLC(SZ_char)){
+            tff_REGISTER[tff_flag_argindex].f_val[0] = '\0';
+            tff_count_val = 1;
+        }
+        else exit(-1);
+    }
+    else if (tff_flag_flval == 1){
+        if (tff_REGISTER[tff_flag_argindex].l_val = (BTS)MLC(SZ_char)){
+            tff_REGISTER[tff_flag_argindex].l_val[0] = '\0';
+            tff_count_val = 1;
+        }
+        else exit(-1);
     }
 }
 

@@ -1,12 +1,10 @@
-# tff Language - v1.0.0 - alpha
-
-[![Security Status](https://s.murphysec.com/badge/asdawej/tff-Lang.svg)](https://www.murphysec.com/p/asdawej/tff-Lang)
+# tff Language - v1.1.0
 
 ```Python
 __author__ = 'asdawej'
 ```
 
-- [tff Language - v1.0.0 - alpha](#tff-language---v100---alpha)
+- [tff Language - v1.1.0](#tff-language---v110)
   - [Basic Concepts](#basic-concepts)
   - [Dependent Files](#dependent-files)
   - [Examples](#examples)
@@ -62,6 +60,7 @@ We use numbers to represent functions:
 | `6` | `00[VU]10[[SS1]...]10[[SS2]...]11` | Run `[[SS1]...]` if the real value of `[VU]` is `T` or more, else run `[[SS2]...]` if the real value `F` or less, no running if `N` |
 | `7` | `0[VU]1` | Input and assign to the memory of the location of `[VU]` |
 | `8` | `0[VU]1` | Output the memory of the location of `[VU]` |
+| `9` | `00[VU1]10[VU2]11` | Add `[VU2]` to the memory of `[VU1]` |
 
 ## Dependent Files
 
@@ -89,7 +88,7 @@ The text file of your code.
 
 ## Examples
 
-An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
+An example of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
 
 ```PowerShell
 50# [out: none. in: (ff, t)location one, (ff, tn)location two. memory: (fn, f)]
@@ -141,8 +140,28 @@ An exeample of swap the memory of the locations of `0FF10T1` and `0FF10TN1`:
     0 0 FF 1 0 TN 1 1
     0 0 T 1 0 TN 1 1
 1
-40 0 FN 1 0 T 1 1# run swap
+40 0 FN 1 0 T 1 1   # run swap
 
 80 0 T 1 0 T 1 1
 80 0 T 1 0 TN 1 1
+```
+
+Input two number and add up:
+
+```PowerShell
+70 0 T 1 0 T 1 1
+70 0 T 1 0 TN 1 1
+80 0 T 1 0 T 1 1
+80 0 T 1 0 TN 1 1
+
+# addition
+90
+    0 0 T 1 0 T 1 1
+    0
+        20 0 T 1 0 TN 1 1
+    1
+1
+
+80 0 T 1 0 T 1 1    # result
+80 0 T 1 0 TN 1 1   # not change number
 ```
