@@ -28,7 +28,7 @@ const char tff_FUNCTAB[] = {
 // tff_PROCESS_STACK {0} is used for tff_local.
 // In tff_BREAKPOINT_STACK, there are the positions to store.
 // tff_REGISTER is for VU input.
-static char tff_PROCESS_STACK[128] = {0};
+static size_t tff_PROCESS_STACK[4069] = {0};
 static fpos_t tff_BREAKPOINT_STACK[4096] = {0};
 static VU tff_REGISTER[2] = {
     {
