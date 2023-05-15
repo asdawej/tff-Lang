@@ -19,7 +19,7 @@ const char tff_FUNCTAB[] = {
     '6',// Assert
     '7',// Input
     '8',// Output
-    '9' // Add
+    '9' // Sub
 }; const int tff_FUNCTAB_size = 13;
 
 
@@ -28,8 +28,8 @@ const char tff_FUNCTAB[] = {
 // tff_PROCESS_STACK {0} is used for tff_local.
 // In tff_BREAKPOINT_STACK, there are the positions to store.
 // tff_REGISTER is for VU input.
-static size_t tff_PROCESS_STACK[4069] = {0};
-static fpos_t tff_BREAKPOINT_STACK[4096] = {0};
+static size_t tff_PROCESS_STACK[8167] = {0};
+static fpos_t tff_BREAKPOINT_STACK[8167] = {0};
 static VU tff_REGISTER[2] = {
     {
         .f_val = "N",
@@ -215,8 +215,8 @@ static void tff_meth_8(void){
 static void tff_meth_9(void){
     VU temp; Deci temp_f, temp_l;
     tff_getval(&temp, tff_REGISTER[0]);
-    temp_f = BTS_AsDeci(temp.f_val)+BTS_AsDeci(tff_REGISTER[1].f_val);
-    temp_l = BTS_AsDeci(temp.l_val)+BTS_AsDeci(tff_REGISTER[1].l_val);
+    temp_f = BTS_AsDeci(temp.f_val)-BTS_AsDeci(tff_REGISTER[1].f_val);
+    temp_l = BTS_AsDeci(temp.l_val)-BTS_AsDeci(tff_REGISTER[1].l_val);
     temp.f_val = BTS_FromDeci(temp_f);
     temp.l_val = BTS_FromDeci(temp_l);
     tff_assign(temp, tff_REGISTER[0]);
