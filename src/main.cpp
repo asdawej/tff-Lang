@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    BTS::Tryte t("tffprnnn");
+    BTS::Tryte t("tttttttt");
     cout << (int)t;
     system("pause");
     return 0;

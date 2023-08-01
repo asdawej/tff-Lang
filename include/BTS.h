@@ -1,11 +1,13 @@
 #ifndef BTS_H
 #define BTS_H
 
+#include "AssistFunc.h"
 #include <bitset>
 
 namespace BTS {
 
 constexpr int tryteTritNum = 8;
+constexpr int maxValue = AssistFunc::pow2(tryteTritNum) - 1;
 
 struct Trit {
     Trit() : fbit(false), lbit(false){};
