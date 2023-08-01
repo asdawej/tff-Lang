@@ -1,3 +1,8 @@
-#include <iostream>
+#ifndef TFF_H
+#define TFF_H
 
-int f(int, int);
+#include "BTS.h"
+
+namespace tff {};
+
+#endif
