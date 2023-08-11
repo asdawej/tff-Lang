@@ -3,6 +3,7 @@
 
 namespace AssistFunc {
 
+// 编译期对2取指函数
 constexpr int pow2(int x) {
     int ret = 1;
     for (int i = 0; i < x; i++)
