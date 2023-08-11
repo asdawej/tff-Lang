@@ -45,16 +45,58 @@ Trit char2trit(char c) {
 }
 
 Tryte::Tryte(const char s[tryteTritNum]) {
-    for (register int i = 0; i < tryteTritNum; i++) {
+    for (auto i = 0; i < tryteTritNum; i++) {
         Trit t = char2trit(s[i]);
         value[2 * i] = t.fbit;
         value[2 * i + 1] = t.lbit;
     }
 }
 
+Tryte::Tryte(const int &i) {
+    if (i == 0) {
+        Trit t = char2trit('N');
+        for (auto m = 0; m < tryteTritNum; m++) {
+            value[2 * m] = t.fbit;
+            value[2 * m + 1] = t.lbit;
+        }
+    } else if (i > 0) {
+        if (i > maxValue) {
+            Trit t = char2trit('T');
+            for (auto m = 0; m < tryteTritNum; m++) {
+                value[2 * m] = t.fbit;
+                value[2 * m + 1] = t.lbit;
+            }
+            return;
+        }
+        int _i = i;
+        for (auto m = tryteTritNum - 1; m >= 0; m--) {
+            Trit t = ((_i % 2) ? char2trit('T') : char2trit('N'));
+            value[2 * m] = t.fbit;
+            value[2 * m + 1] = t.lbit;
+            _i /= 2;
+        }
+    } else if (i < 0) {
+        if (i < -maxValue) {
+            Trit t = char2trit('F');
+            for (auto m = 0; m < tryteTritNum; m++) {
+                value[2 * m] = t.fbit;
+                value[2 * m + 1] = t.lbit;
+            }
+            return;
+        }
+        int _i = -i;
+        for (auto m = tryteTritNum - 1; m >= 0; m--) {
+            Trit t = ((_i % 2) ? char2trit('F') : char2trit('N'));
+            value[2 * m] = t.fbit;
+            value[2 * m + 1] = t.lbit;
+            _i /= 2;
+        }
+    }
+}
+
 char *Tryte::repr() {
     char *ret = new char[9];
-    for (register int i = 0; i < tryteTritNum; i++)
+    for (auto i = 0; i < tryteTritNum; i++)
         ret[i] = trit2char(Trit(value[2 * i], value[2 * i + 1]));
     ret[8] = '\0';
     return ret;
@@ -62,7 +104,7 @@ char *Tryte::repr() {
 
 Tryte::operator int() {
     int ret = 0;
-    for (register int i = 0; i < tryteTritNum; i++) {
+    for (auto i = 0; i < tryteTritNum; i++) {
         ret *= 2;
         switch (trit2char(Trit(value[2 * i], value[2 * i + 1]))) {
         case 'T':
