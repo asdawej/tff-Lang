@@ -14,7 +14,7 @@ struct FunctionNode {
     virtual void operator()() = 0; // 代码运行接口
 };
 
-// `0`结点，将一个代码树设置为子线程
+// `0`结点, 将一个代码树设置为子线程
 struct ThreadNode : public FunctionNode {
     ThreadNode();
     ~ThreadNode();
@@ -22,7 +22,7 @@ struct ThreadNode : public FunctionNode {
     void operator()();
 };
 
-// `1`结点，将一个代码树设置为原子操作
+// `1`结点, 将一个代码树设置为原子操作
 struct AtomNode : public FunctionNode {
     AtomNode();
     ~AtomNode();
@@ -30,7 +30,7 @@ struct AtomNode : public FunctionNode {
     void operator()();
 };
 
-// `3`结点，赋值操作
+// `3`结点, 赋值操作
 struct AssignNode : public FunctionNode {
     AssignNode();
     ~AssignNode();
@@ -38,24 +38,24 @@ struct AssignNode : public FunctionNode {
     void operator()();
 };
 
-// `4`结点，执行委托地址上的代码树
+// `4`结点, 执行委托地址上的代码树
 struct ExecuteNode : public FunctionNode {
     ExecuteNode();
     ~ExecuteNode();
-    BTS::Tryte address; // 委托地址
+    BTS::Tryte addr; // 委托地址
     void operator()();
 };
 
-// `5`结点，将代码树委托给一个地址
+// `5`结点, 将代码树委托给一个地址
 struct DefineNode : public FunctionNode {
     DefineNode();
     ~DefineNode();
-    BTS::Tryte address; // 委托地址
+    BTS::Tryte addr;    // 委托地址
     FunctionNode *func; // 代码树
     void operator()();
 };
 
-// `6`结点，条件转移
+// `6`结点, 条件转移
 struct ConditionNode : public FunctionNode {
     ConditionNode();
     ~ConditionNode();
@@ -64,7 +64,7 @@ struct ConditionNode : public FunctionNode {
     void operator()();
 };
 
-// `7`结点，导通两个流
+// `7`结点, 导通两个流
 struct StreamIONode : public FunctionNode {
     StreamIONode();
     ~StreamIONode();
@@ -73,15 +73,24 @@ struct StreamIONode : public FunctionNode {
     void operator()();
 };
 
-// `8`结点，解除代码树委托
+// `8`结点, 解除代码树委托
 struct ReleaseNode : public FunctionNode {
     ReleaseNode();
     ~ReleaseNode();
-    BTS::Tryte address; // 委托地址
+    BTS::Tryte addr; // 委托地址
     void operator()();
 };
 
-// 终止结点，释放运行终止信号
+// `9`结点, 传播代码树委托
+struct MoveNode : public FunctionNode {
+    MoveNode();
+    ~MoveNode();
+    BTS::Tryte dest; // 传播地址
+    BTS::Tryte addr; // 委托地址
+    void operator()();
+};
+
+// 终止结点, 释放运行终止信号
 struct EndNode : public FunctionNode {
     EndNode();
     ~EndNode();

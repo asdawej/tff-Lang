@@ -3,13 +3,14 @@
 
 #include "BTS.h"
 #include "Function.h"
+#include "Stream.h"
 
 namespace tff {
 
 constexpr int stackLength = 2 * BTS::maxValue + 1;
 
-BTS::Tryte _stack[stackLength];
-auto stack = &_stack[BTS::maxValue];
+// 内存栈
+extern BTS::Tryte *stack;
 
 }; // namespace tff
 
