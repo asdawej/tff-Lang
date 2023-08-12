@@ -6,40 +6,51 @@
 
 namespace Stream {
 
-// 数据流基类
-struct Stream {
-    Stream() = default;
-    virtual ~Stream() = default;
+// 输入流接口
+struct Istream {
+    Istream() = default;
+    ~Istream() = default;
     virtual void in(BTS::Tryte) = 0;
-    virtual BTS::Tryte out(void) = 0;
+};
+
+// 输出流接口
+struct Ostream {
+    Ostream() = default;
+    ~Ostream() = default;
+    virtual BTS::Tryte out() = 0;
 };
 
 // 内存栈数据流
-struct StackStream : public Stream {
-    StackStream();
-    ~StackStream();
+struct StackStream : public Istream, public Ostream {
+    StackStream() = default;
+    StackStream(BTS::Tryte &_stackAddr) : stackAddr(&_stackAddr){};
+    ~StackStream() = default;
     BTS::Tryte *stackAddr; // 内存栈地址
     void in(BTS::Tryte);
-    BTS::Tryte out(void);
+    BTS::Tryte out();
 };
 
 // istream包装
-struct IstreamStream : public Stream {
-    IstreamStream();
-    ~IstreamStream();
+struct IstreamStd : public Ostream {
+    IstreamStd() = default;
+    IstreamStd(std::istream &_istr) : istr(&_istr){};
+    ~IstreamStd() = default;
     std::istream *istr; // 输入流
-    void in(BTS::Tryte);
-    BTS::Tryte out(void);
+    BTS::Tryte out();
 };
 
 // ostream包装
-struct OstreamStream : public Stream {
-    OstreamStream();
-    ~OstreamStream();
+struct OstreamStd : public Istream {
+    OstreamStd() = default;
+    OstreamStd(std::ostream &_ostr) : ostr(&_ostr){};
+    ~OstreamStd() = default;
     std::ostream *ostr; // 输出流
     void in(BTS::Tryte);
-    BTS::Tryte out(void);
 };
+
+extern IstreamStd stdinStream;  // stdin包装
+extern OstreamStd stdoutStream; // stdout包装
+extern OstreamStd stderrStream; // stderr包装
 
 }; // namespace Stream
 

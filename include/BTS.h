@@ -11,6 +11,7 @@ constexpr int maxValue = AssistFunc::pow2(tryteTritNum) - 1;
 
 struct Trit {
     Trit() : fbit(false), lbit(false){};
+    Trit(const Trit &_t) : fbit(_t.fbit), lbit(_t.lbit){};
     Trit(bool _f, bool _l) : fbit(_f), lbit(_l){};
     ~Trit() = default;
     bool fbit;
@@ -23,6 +24,7 @@ Trit char2trit(char c);
 
 struct Tryte {
     Tryte() = default;
+    Tryte(const Tryte &_tr) : value(_tr.value){};
     Tryte(const char s[tryteTritNum]);
     Tryte(const int &);
     ~Tryte() = default;

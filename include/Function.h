@@ -68,8 +68,9 @@ struct ConditionNode : public FunctionNode {
 struct StreamIONode : public FunctionNode {
     StreamIONode();
     ~StreamIONode();
-    Stream::Stream *str_I, *str_O; // 输入流str_I，输出流str_O
-    BTS::Tryte size;               // 三进制字节数
+    Stream::Istream *str_I; // 输入流
+    Stream::Ostream *str_O; // 输出流
+    BTS::Tryte size;        // 三进制字节数
     void operator()();
 };
 
