@@ -3,6 +3,6 @@
 namespace tff {
 
 BTS::Tryte _stack[stackLength];
-auto stack = &_stack[BTS::maxValue];
+BTS::Tryte *stack = &_stack[BTS::maxValue];
 
 }; // namespace tff
