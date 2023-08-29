@@ -1,4 +1,4 @@
-#include "../include/tff.h"
+#include "tff.h"
 #include <iostream>
 using namespace std;
 

@@ -1,3 +1,3 @@
-#include "../include/Function.h"
+#include "Function.h"
 
 namespace Function {}; // namespace Function

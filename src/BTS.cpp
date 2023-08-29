@@ -1,4 +1,4 @@
-#include "../include/BTS.h"
+#include "BTS.h"
 
 namespace BTS {
 

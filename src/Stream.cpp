@@ -1,4 +1,4 @@
-#include "../include/Stream.h"
+#include "Stream.h"
 
 namespace Stream {
 
