@@ -117,10 +117,11 @@ struct ConditionNode : public FunctionNode {
 // `7`结点, 导通两个流
 struct StreamIONode : public FunctionNode {
     StreamIONode() : str_I(nullptr), str_O(nullptr), size(0){};
-    ~StreamIONode() = default; // # 需要判断是否需要delete
-    Stream::Istream *str_I;    // 输入流
-    Stream::Ostream *str_O;    // 输出流
-    BTS::Tryte size;           // 三进制字节数
+    ~StreamIONode() = default;
+    // # StackStream需要刷新，待解决
+    Stream::Ostream *str_O; // 输出流
+    Stream::Istream *str_I; // 输入流
+    BTS::Tryte size;        // 三进制字节数
 
     Type_FunctionNode type() override;
     void operator()() override;
