@@ -47,7 +47,7 @@ FunctionNode::NodePair FunctionNode::findEndNode(FunctionNode *start) {
     auto *ptr = start;
     while (ptr->next != nullptr) {
         if (ptr->next->type() == Type_FunctionNode::Type_EndNode)
-            return FunctionNode::NodePair{ptr, ptr->next};
+            return FunctionNode::NodePair(ptr, ptr->next);
         ptr = ptr->next;
     }
     return FunctionNode::NodePair{ptr, nullptr};
@@ -177,33 +177,45 @@ void StreamIONode::serialize(std::ostream &ostr) {
     AssistFunc::binaryIn(ostr, type());
     if (str_I->type() == Stream::Type_Stream::Type_StackStream) {
         AssistFunc::binaryIn(ostr, str_I->type());
-        // # 无法得到栈位置
+        auto &_str_I_stack = *(Stream::StackStream *)str_I;
+        AssistFunc::binaryIn(ostr, BTS::Tryte(_str_I_stack.stackAddr - tff::stack));
     } else {
         AssistFunc::binaryIn(ostr, str_I->type());
-        // # 无法得到标准流
+        auto &_str_I_OStd = *(Stream::OstreamStd *)str_I;
+        for (auto &_pr : Register::dict_Key2ObjectStd) {
+            if (_pr.second == _str_I_OStd.ostr) {
+                AssistFunc::binaryIn(ostr, _pr.first);
+                break;
+            }
+        }
     }
     if (str_O->type() == Stream::Type_Stream::Type_StackStream) {
         AssistFunc::binaryIn(ostr, str_O->type());
-        // # 无法得到栈位置
+        auto &_str_O_stack = *(Stream::StackStream *)str_O;
+        AssistFunc::binaryIn(ostr, BTS::Tryte(_str_O_stack.stackAddr - tff::stack));
     } else {
         AssistFunc::binaryIn(ostr, str_O->type());
-        // # 无法得到标准流
+        auto &_str_O_IStd = *(Stream::IstreamStd *)str_I;
+        for (auto &_pr : Register::dict_Key2ObjectStd) {
+            if (_pr.second == _str_O_IStd.istr) {
+                AssistFunc::binaryIn(ostr, _pr.first);
+                break;
+            }
+        }
     }
     AssistFunc::binaryIn(ostr, size);
     next->serialize(ostr);
 }
 
 void StreamIONode::deserialize(std::istream &istr) {
-    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream) {
-        // # 无法得到栈位置
-    } else {
-        // # 无法得到标准流
-    }
-    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream) {
-        // # 无法得到栈位置
-    } else {
-        // # 无法得到标准流
-    }
+    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream)
+        str_I = new Stream::StackStream(tff::stack[AssistFunc::binaryOut<BTS::Tryte>(istr)]);
+    else
+        str_I = (Stream::Istream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
+    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream)
+        str_O = new Stream::StackStream(tff::stack[AssistFunc::binaryOut<BTS::Tryte>(istr)]);
+    else
+        str_O = (Stream::Ostream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
     size = AssistFunc::binaryOut<BTS::Tryte>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
