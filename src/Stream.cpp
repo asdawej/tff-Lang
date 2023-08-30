@@ -2,6 +2,10 @@
 
 namespace Stream {
 
+// === StackStream ===
+
+Type_Stream StackStream::type() { return Type_Stream::Type_StackStream; }
+
 void StackStream::in(BTS::Tryte data) {
     *stackAddr = data;
     stackAddr++;
@@ -13,6 +17,10 @@ BTS::Tryte StackStream::out() {
     return ret;
 }
 
+// === IstreamStd ===
+
+Type_Stream IstreamStd::type() { return Type_Stream::Type_IstreamStd; }
+
 BTS::Tryte IstreamStd::out() {
     if (func_in != nullptr)
         return func_in(*istr);
@@ -20,6 +28,10 @@ BTS::Tryte IstreamStd::out() {
     *istr >> s;
     return BTS::Tryte(s);
 }
+
+// === OstreamStd ===
+
+Type_Stream OstreamStd::type() { return Type_Stream::Type_OstreamStd; }
 
 void OstreamStd::in(BTS::Tryte tr) {
     if (func_out != nullptr)

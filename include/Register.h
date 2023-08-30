@@ -6,14 +6,9 @@
 
 namespace Register {
 
-std::map<int, std::function<void *()>> m;
+enum struct ID_ObjectStd;
 
-template <typename _T> void REG(int _k) {
-    const std::function<void *()> _f = []() { return (void *)new _T; };
-    m[_k] = f;
-}
-
-template <typename _base> _base *FAC(int _k) { return (_base *)m[_k](); }
+extern std::map<ID_ObjectStd, void *> dict_Key2ObjectStd;
 
 }; // namespace Register
 

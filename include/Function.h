@@ -22,7 +22,7 @@ enum struct Type_FunctionNode {
 // 代码树结点基类
 struct FunctionNode {
     FunctionNode() : next(nullptr){};
-    virtual ~FunctionNode() = 0;
+    virtual ~FunctionNode() = default;
     FunctionNode *next; // 后继节点
 
     using NodePair = std::pair<FunctionNode *, FunctionNode *>;
@@ -34,6 +34,10 @@ struct FunctionNode {
     virtual Type_FunctionNode type() = 0;
     // 代码运行接口
     virtual void operator()() = 0;
+    // 二进制序列化
+    virtual void serialize(std::ostream &) = 0;
+    // 二进制反序列化
+    virtual void deserialize(std::istream &) = 0;
 };
 
 // `0`结点, 将一个代码树设置为子线程
@@ -44,6 +48,8 @@ struct ThreadNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override{}; // # 暂时无法实现
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `1`结点, 将一个代码树设置为原子操作
@@ -54,6 +60,8 @@ struct AtomNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override{}; // # 暂时无法实现
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `3`结点, 赋值操作
@@ -64,6 +72,8 @@ struct AssignNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `4`结点, 执行委托地址上的代码树
@@ -74,6 +84,8 @@ struct ExecuteNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `5`结点, 将代码树委托给一个地址
@@ -85,6 +97,8 @@ struct DefineNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `6`结点, 条件转移
@@ -96,6 +110,8 @@ struct ConditionNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `7`结点, 导通两个流
@@ -108,6 +124,8 @@ struct StreamIONode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `8`结点, 解除代码树委托
@@ -118,6 +136,8 @@ struct ReleaseNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // `9`结点, 传播代码树委托
@@ -129,6 +149,8 @@ struct MoveNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
 
 // 终止结点, 释放运行终止信号
@@ -138,7 +160,11 @@ struct EndNode : public FunctionNode {
 
     Type_FunctionNode type() override;
     void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
 };
+
+FunctionNode *factory_FunctionNode(Type_FunctionNode &&);
 
 }; // namespace Function
 
