@@ -3,32 +3,57 @@
 
 #include "BTS.h"
 #include "Stream.h"
-#include "tff.h"
 
 namespace Function {
+
+enum struct Type_FunctionNode {
+    Type_ThreadNode = 0,
+    Type_AtomNode = 1,
+    Type_AssignNode = 3,
+    Type_ExecuteNode = 4,
+    Type_DefineNode = 5,
+    Type_ConditionNode = 6,
+    Type_StreamIONode = 7,
+    Type_ReleaseNode = 8,
+    Type_MoveNode = 9,
+    Type_EndNode
+};
 
 // 代码树结点基类
 struct FunctionNode {
     FunctionNode() : next(nullptr){};
     virtual ~FunctionNode() = 0;
-    FunctionNode *next;            // 后继节点
-    virtual void operator()() = 0; // 代码运行接口
+    FunctionNode *next; // 后继节点
+
+    using NodePair = std::pair<FunctionNode *, FunctionNode *>;
+    // 返回终止结点及其前一个结点
+    static NodePair findEndNode(FunctionNode *);
+    // 连接两个代码树
+    static void connect(FunctionNode *, FunctionNode *);
+    // 对象类型反射
+    virtual Type_FunctionNode type() = 0;
+    // 代码运行接口
+    virtual void operator()() = 0;
 };
 
 // `0`结点, 将一个代码树设置为子线程
 struct ThreadNode : public FunctionNode {
     ThreadNode() : thread(nullptr){};
     ~ThreadNode() { delete thread; };
-    FunctionNode *thread;           // 子线程代码树
-    void operator()() override = 0; // # 暂时无法实现
+    FunctionNode *thread; // 子线程代码树
+
+    Type_FunctionNode type() override;
+    void operator()() override{}; // # 暂时无法实现
 };
 
 // `1`结点, 将一个代码树设置为原子操作
 struct AtomNode : public FunctionNode {
     AtomNode() : atom(nullptr){};
     ~AtomNode() { delete atom; };
-    FunctionNode *atom;             // 原子操作代码树
-    void operator()() override = 0; // # 暂时无法实现
+    FunctionNode *atom; // 原子操作代码树
+
+    Type_FunctionNode type() override;
+    void operator()() override{}; // # 暂时无法实现
 };
 
 // `3`结点, 赋值操作
@@ -36,6 +61,8 @@ struct AssignNode : public FunctionNode {
     AssignNode() : dest(0), value(0){};
     ~AssignNode() = default;
     BTS::Tryte dest, value; // 把value赋给dest地址
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -44,6 +71,8 @@ struct ExecuteNode : public FunctionNode {
     ExecuteNode() : addr(0){};
     ~ExecuteNode() = default;
     BTS::Tryte addr; // 委托地址
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -53,6 +82,8 @@ struct DefineNode : public FunctionNode {
     ~DefineNode() { delete func; };
     BTS::Tryte addr;    // 委托地址
     FunctionNode *func; // 代码树
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -62,6 +93,8 @@ struct ConditionNode : public FunctionNode {
     ~ConditionNode() { delete func_T, func_F; };
     BTS::Tryte cond;               // 条件
     FunctionNode *func_T, *func_F; // 正值代码树func_T，负值代码树func_F
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -72,6 +105,8 @@ struct StreamIONode : public FunctionNode {
     Stream::Istream *str_I;    // 输入流
     Stream::Ostream *str_O;    // 输出流
     BTS::Tryte size;           // 三进制字节数
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -80,6 +115,8 @@ struct ReleaseNode : public FunctionNode {
     ReleaseNode() : addr(0){};
     ~ReleaseNode() = default;
     BTS::Tryte addr; // 委托地址
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -89,6 +126,8 @@ struct MoveNode : public FunctionNode {
     ~MoveNode() = default;
     BTS::Tryte dest; // 传播地址
     BTS::Tryte addr; // 委托地址
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
@@ -96,6 +135,8 @@ struct MoveNode : public FunctionNode {
 struct EndNode : public FunctionNode {
     EndNode() = default;
     ~EndNode() = default;
+
+    Type_FunctionNode type() override;
     void operator()() override;
 };
 
