@@ -9,15 +9,18 @@ namespace Stream {
 
 enum struct Type_Stream { Type_StackStream, Type_IstreamStd, Type_OstreamStd };
 
-// 输入流接口
-struct Istream {
+// 流类型基类, 提供类型反射
+struct StreamBase {
     virtual Type_Stream type() = 0;
+};
+
+// 输入流接口
+struct Istream : public StreamBase {
     virtual void in(BTS::Tryte) = 0;
 };
 
 // 输出流接口
-struct Ostream {
-    virtual Type_Stream type() = 0;
+struct Ostream : public StreamBase {
     virtual BTS::Tryte out() = 0;
 };
 

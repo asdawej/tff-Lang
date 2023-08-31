@@ -38,6 +38,8 @@ FunctionNode *factory_FunctionNode(Type_FunctionNode &&_tp) {
     case TP::Type_EndNode:
         return new EndNode;
         break;
+    case TP::Type_StdFunctionNode:
+        return new StdFunctionNode;
     default:
         break;
     }
@@ -88,6 +90,11 @@ void ThreadNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
+void ThreadNode::operator()() {
+    if (next)
+        (*next)();
+}
+
 // === AtomNode ===
 
 Type_FunctionNode AtomNode::type() { return Type_FunctionNode::Type_AtomNode; }
@@ -103,6 +110,11 @@ void AtomNode::deserialize(std::istream &istr) {
     atom->deserialize(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
+}
+
+void AtomNode::operator()() {
+    if (next)
+        (*next)();
 }
 
 // === AssignNode ===
@@ -123,7 +135,11 @@ void AssignNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void AssignNode::operator()() { tff::stack[_getValue(dest)] = _getValue(value); }
+void AssignNode::operator()() {
+    tff::stack[_getValue(dest)] = _getValue(value);
+    if (next)
+        (*next)();
+}
 
 // === ExecuteNode ===
 
@@ -144,6 +160,8 @@ void ExecuteNode::deserialize(std::istream &istr) {
 void ExecuteNode::operator()() {
     FunctionNode::connect(tff::funcTable[_getValue(addr)], next);
     next = tff::funcTable[_getValue(addr)];
+    if (next)
+        (*next)();
 }
 
 // === DefineNode ===
@@ -165,7 +183,11 @@ void DefineNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void DefineNode::operator()() { tff::funcTable[_getValue(addr)] = func; }
+void DefineNode::operator()() {
+    tff::funcTable[_getValue(addr)] = func;
+    if (next)
+        (*next)();
+}
 
 // === ConditionNode ===
 
@@ -198,6 +220,8 @@ void ConditionNode::operator()() {
         FunctionNode::connect(func_F, next);
         next = func_F;
     }
+    if (next)
+        (*next)();
 }
 
 // === StreamIONode ===
@@ -206,29 +230,27 @@ Type_FunctionNode StreamIONode::type() { return Type_FunctionNode::Type_StreamIO
 
 void StreamIONode::serialize(std::ostream &ostr) {
     AssistFunc::binaryIn(ostr, type());
+    AssistFunc::binaryIn(ostr, str_O->type());
     if (str_O->type() == Stream::Type_Stream::Type_StackStream) { // 栈输出
-        AssistFunc::binaryIn(ostr, str_O->type());
-        auto &_str_O_stack = *(Stream::StackStream *)str_O;
+        auto &_str_O_stack = *dynamic_cast<Stream::StackStream *>(str_O);
         AssistFunc::binaryIn(ostr, _str_O_stack.stackAddr);
     } else { // 标准输入流输出
-        AssistFunc::binaryIn(ostr, str_O->type());
-        auto &_str_O_IStd = *(Stream::IstreamStd *)str_I;
+        auto *_str_O_IStd = dynamic_cast<Stream::IstreamStd *>(str_O);
         for (auto &_pr : Register::dict_Key2ObjectStd) {
-            if (_pr.second == _str_O_IStd.istr) {
+            if (_pr.second == _str_O_IStd) {
                 AssistFunc::binaryIn(ostr, _pr.first);
                 break;
             }
         }
     }
+    AssistFunc::binaryIn(ostr, str_I->type());
     if (str_I->type() == Stream::Type_Stream::Type_StackStream) { // 栈输入
-        AssistFunc::binaryIn(ostr, str_I->type());
-        auto &_str_I_stack = *(Stream::StackStream *)str_I;
+        auto &_str_I_stack = *dynamic_cast<Stream::StackStream *>(str_I);
         AssistFunc::binaryIn(ostr, _str_I_stack.stackAddr);
     } else { // 标准输出流输入
-        AssistFunc::binaryIn(ostr, str_I->type());
-        auto &_str_I_OStd = *(Stream::OstreamStd *)str_I;
+        auto *_str_I_OStd = dynamic_cast<Stream::OstreamStd *>(str_I);
         for (auto &_pr : Register::dict_Key2ObjectStd) {
-            if (_pr.second == _str_I_OStd.ostr) {
+            if (_pr.second == _str_I_OStd) {
                 AssistFunc::binaryIn(ostr, _pr.first);
                 break;
             }
@@ -263,6 +285,8 @@ void StreamIONode::operator()() {
         ((Stream::StackStream *)str_I)->size = 0;
     if (str_O->type() == Stream::Type_Stream::Type_StackStream)
         ((Stream::StackStream *)str_O)->size = 0;
+    if (next)
+        (*next)();
 }
 
 // === ReleaseNode ===
@@ -281,7 +305,11 @@ void ReleaseNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void ReleaseNode::operator()() { tff::funcTable[_getValue(addr)] = nullptr; }
+void ReleaseNode::operator()() {
+    tff::funcTable[_getValue(addr)] = nullptr;
+    if (next)
+        (*next)();
+}
 
 // === MoveNode ===
 
@@ -301,7 +329,11 @@ void MoveNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void MoveNode::operator()() { tff::funcTable[_getValue(dest)] = tff::funcTable[_getValue(addr)]; }
+void MoveNode::operator()() {
+    tff::funcTable[_getValue(dest)] = tff::funcTable[_getValue(addr)];
+    if (next)
+        (*next)();
+}
 
 // === EndNode ===
 
@@ -312,5 +344,32 @@ void EndNode::serialize(std::ostream &ostr) { AssistFunc::binaryIn(ostr, type())
 void EndNode::deserialize(std::istream &istr) {}
 
 void EndNode::operator()() {}
+
+// === StdFunctionNode ===
+
+Type_FunctionNode StdFunctionNode::type() { return Type_FunctionNode::Type_StdFunctionNode; }
+
+void StdFunctionNode::serialize(std::ostream &ostr) {
+    AssistFunc::binaryIn(ostr, type());
+    for (auto &_pr : Register::dict_Key2ObjectStd) {
+        if (_pr.second == func) {
+            AssistFunc::binaryIn(ostr, _pr.first);
+            break;
+        }
+    }
+    next->serialize(ostr);
+}
+
+void StdFunctionNode::deserialize(std::istream &istr) {
+    func = (Func)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
+    next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
+    next->deserialize(istr);
+}
+
+void StdFunctionNode::operator()() {
+    func();
+    if (next)
+        (*next)();
+}
 
 }; // namespace Function

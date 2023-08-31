@@ -10,4 +10,5 @@ graph TB
     Stream.h .-> tff.h
     TryteExpr.h .-> Function.h
     TryteExpr.h --> Stream.h
+    Register.h --> tff.h
 ```

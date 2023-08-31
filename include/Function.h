@@ -17,7 +17,8 @@ enum struct Type_FunctionNode {
     Type_StreamIONode = 7,
     Type_ReleaseNode = 8,
     Type_MoveNode = 9,
-    Type_EndNode
+    Type_EndNode,
+    Type_StdFunctionNode
 };
 
 // 代码树结点基类
@@ -48,7 +49,7 @@ struct ThreadNode : public FunctionNode {
     FunctionNode *thread; // 子线程代码树
 
     Type_FunctionNode type() override;
-    void operator()() override{}; // # 暂时无法实现
+    void operator()() override; // # 暂时无法实现
     void serialize(std::ostream &) override;
     void deserialize(std::istream &) override;
 };
@@ -60,7 +61,7 @@ struct AtomNode : public FunctionNode {
     FunctionNode *atom; // 原子操作代码树
 
     Type_FunctionNode type() override;
-    void operator()() override{}; // # 暂时无法实现
+    void operator()() override; // # 暂时无法实现
     void serialize(std::ostream &) override;
     void deserialize(std::istream &) override;
 };
@@ -158,6 +159,19 @@ struct MoveNode : public FunctionNode {
 struct EndNode : public FunctionNode {
     EndNode() = default;
     ~EndNode() = default;
+
+    Type_FunctionNode type() override;
+    void operator()() override;
+    void serialize(std::ostream &) override;
+    void deserialize(std::istream &) override;
+};
+
+// 库函数包装结点, 运行相应的函数
+struct StdFunctionNode : public FunctionNode {
+    using Func = void (*)();
+    StdFunctionNode() : func(nullptr){};
+    ~StdFunctionNode() = default;
+    Func func;
 
     Type_FunctionNode type() override;
     void operator()() override;

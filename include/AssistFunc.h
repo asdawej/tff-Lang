@@ -20,7 +20,7 @@ void binaryIn(std::ostream &ostr, auto &&data) { ostr.write((char *)&data, sizeo
 // 二进制读出
 template <typename _T> _T binaryOut(std::istream &istr) {
     _T data;
-    istr.read((char *)&data, sizeof(_T));
+    istr.read((char *)&data, sizeof(data));
     return data;
 }
 
