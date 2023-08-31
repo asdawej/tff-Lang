@@ -119,7 +119,6 @@ struct ConditionNode : public FunctionNode {
 struct StreamIONode : public FunctionNode {
     StreamIONode() : str_I(nullptr), str_O(nullptr), size(0){};
     ~StreamIONode() = default;
-    // # StackStream需要刷新，待解决
     Stream::Ostream *str_O; // 输出流
     Stream::Istream *str_I; // 输入流
     tff::TryteExpr size;    // 三进制字节数

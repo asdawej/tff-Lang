@@ -7,13 +7,13 @@ namespace Stream {
 Type_Stream StackStream::type() { return Type_Stream::Type_StackStream; }
 
 void StackStream::in(BTS::Tryte data) {
-    *stackAddr = data;
-    stackAddr++;
+    tff::stack[stackAddr + size] = data;
+    size++;
 }
 
 BTS::Tryte StackStream::out() {
-    auto &ret = *stackAddr;
-    stackAddr++;
+    auto &ret = tff::stack[stackAddr + size];
+    size++;
     return ret;
 }
 

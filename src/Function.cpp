@@ -193,11 +193,11 @@ Type_FunctionNode StreamIONode::type() { return Type_FunctionNode::Type_StreamIO
 
 void StreamIONode::serialize(std::ostream &ostr) {
     AssistFunc::binaryIn(ostr, type());
-    if (str_O->type() == Stream::Type_Stream::Type_StackStream) {
+    if (str_O->type() == Stream::Type_Stream::Type_StackStream) { // 栈输出
         AssistFunc::binaryIn(ostr, str_O->type());
         auto &_str_O_stack = *(Stream::StackStream *)str_O;
-        AssistFunc::binaryIn(ostr, BTS::Tryte(_str_O_stack.stackAddr - tff::stack));
-    } else {
+        AssistFunc::binaryIn(ostr, _str_O_stack.stackAddr);
+    } else { // 标准输入流输出
         AssistFunc::binaryIn(ostr, str_O->type());
         auto &_str_O_IStd = *(Stream::IstreamStd *)str_I;
         for (auto &_pr : Register::dict_Key2ObjectStd) {
@@ -207,11 +207,11 @@ void StreamIONode::serialize(std::ostream &ostr) {
             }
         }
     }
-    if (str_I->type() == Stream::Type_Stream::Type_StackStream) {
+    if (str_I->type() == Stream::Type_Stream::Type_StackStream) { // 栈输入
         AssistFunc::binaryIn(ostr, str_I->type());
         auto &_str_I_stack = *(Stream::StackStream *)str_I;
-        AssistFunc::binaryIn(ostr, BTS::Tryte(_str_I_stack.stackAddr - tff::stack));
-    } else {
+        AssistFunc::binaryIn(ostr, _str_I_stack.stackAddr);
+    } else { // 标准输出流输入
         AssistFunc::binaryIn(ostr, str_I->type());
         auto &_str_I_OStd = *(Stream::OstreamStd *)str_I;
         for (auto &_pr : Register::dict_Key2ObjectStd) {
@@ -226,20 +226,31 @@ void StreamIONode::serialize(std::ostream &ostr) {
 }
 
 void StreamIONode::deserialize(std::istream &istr) {
-    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream)
-        str_O = new Stream::StackStream(tff::stack[AssistFunc::binaryOut<BTS::Tryte>(istr)]);
-    else
+    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream) // 栈输出
+        str_O = new Stream::StackStream(AssistFunc::binaryOut<tff::TryteExpr>(istr));
+    else // 标准输入流输出
         str_O = (Stream::Ostream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
-    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream)
-        str_I = new Stream::StackStream(tff::stack[AssistFunc::binaryOut<BTS::Tryte>(istr)]);
-    else
+    if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream) // 栈输入
+        str_I = new Stream::StackStream(AssistFunc::binaryOut<tff::TryteExpr>(istr));
+    else // 标准输出流输入
         str_I = (Stream::Istream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
     size = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }
 
-void StreamIONode::operator()() { str_I->in(str_O->out()); }
+void StreamIONode::operator()() {
+    int count = size;
+    while (count > 0) {
+        str_I->in(str_O->out());
+        count--;
+    }
+    // 栈流恢复
+    if (str_I->type() == Stream::Type_Stream::Type_StackStream)
+        ((Stream::StackStream *)str_I)->size = 0;
+    if (str_O->type() == Stream::Type_Stream::Type_StackStream)
+        ((Stream::StackStream *)str_O)->size = 0;
+}
 
 // === ReleaseNode ===
 

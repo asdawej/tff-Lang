@@ -23,10 +23,11 @@ struct Ostream {
 
 // 内存栈数据流
 struct StackStream : public Istream, public Ostream {
-    StackStream() : stackAddr(nullptr){};
-    StackStream(BTS::Tryte &_stackAddr) : stackAddr(&_stackAddr){};
+    StackStream() : stackAddr(0), size(0){};
+    StackStream(const tff::TryteExpr &_stackAddr) : stackAddr(_stackAddr), size(0){};
     ~StackStream() = default;
-    BTS::Tryte *stackAddr; // 内存栈地址
+    tff::TryteExpr stackAddr; // 内存栈地址
+    size_t size;              // 已导通三进制字节数
 
     Type_Stream type() override;
     void in(BTS::Tryte) override;
