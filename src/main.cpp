@@ -1,7 +1,13 @@
 #include "tff.h"
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 using namespace std;
+
+std::vector<std::string> analyzer(const char *tffl_file);
+void compiler(std::vector<std::string> tokens, const char *tffb_file);
+void interpreter(const char *tffb_file);
 
 // ******
 
