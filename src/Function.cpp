@@ -1,6 +1,7 @@
 #include "Function.h"
 #include "AssistFunc.h"
 #include "Register.h"
+#include "tff.h"
 
 namespace Function {
 
@@ -59,6 +60,17 @@ void FunctionNode::connect(FunctionNode *f_root, FunctionNode *l_root) {
     _pr.first->next = l_root;
 }
 
+// 辅助函数, 取表达式值
+BTS::Tryte _getValue(tff::TryteExpr expr) {
+    auto count = expr.suffix;
+    auto ret = expr.value;
+    while (count > 0) {
+        ret = tff::stack[ret];
+        count--;
+    }
+    return ret;
+}
+
 // === ThreadNode ===
 
 Type_FunctionNode ThreadNode::type() { return Type_FunctionNode::Type_ThreadNode; }
@@ -111,7 +123,7 @@ void AssignNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void AssignNode::operator()() { tff::stack[dest] = value; }
+void AssignNode::operator()() { tff::stack[_getValue(dest)] = _getValue(value); }
 
 // === ExecuteNode ===
 
@@ -130,8 +142,8 @@ void ExecuteNode::deserialize(std::istream &istr) {
 }
 
 void ExecuteNode::operator()() {
-    FunctionNode::connect(tff::funcTable[addr], next);
-    next = tff::funcTable[addr];
+    FunctionNode::connect(tff::funcTable[_getValue(addr)], next);
+    next = tff::funcTable[_getValue(addr)];
 }
 
 // === DefineNode ===
@@ -153,7 +165,7 @@ void DefineNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void DefineNode::operator()() { tff::funcTable[addr] = func; }
+void DefineNode::operator()() { tff::funcTable[_getValue(addr)] = func; }
 
 // === ConditionNode ===
 
@@ -178,10 +190,11 @@ void ConditionNode::deserialize(std::istream &istr) {
 }
 
 void ConditionNode::operator()() {
-    if (cond > 0) {
+    auto &&_cond = _getValue(cond);
+    if (_cond > 0) {
         FunctionNode::connect(func_T, next);
         next = func_T;
-    } else if (cond < 0) {
+    } else if (_cond < 0) {
         FunctionNode::connect(func_F, next);
         next = func_F;
     }
@@ -240,7 +253,7 @@ void StreamIONode::deserialize(std::istream &istr) {
 }
 
 void StreamIONode::operator()() {
-    int count = size;
+    int count = _getValue(size);
     while (count > 0) {
         str_I->in(str_O->out());
         count--;
@@ -268,7 +281,7 @@ void ReleaseNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void ReleaseNode::operator()() { tff::funcTable[addr] = nullptr; }
+void ReleaseNode::operator()() { tff::funcTable[_getValue(addr)] = nullptr; }
 
 // === MoveNode ===
 
@@ -288,7 +301,7 @@ void MoveNode::deserialize(std::istream &istr) {
     next->deserialize(istr);
 }
 
-void MoveNode::operator()() { tff::funcTable[dest] = tff::funcTable[addr]; }
+void MoveNode::operator()() { tff::funcTable[_getValue(dest)] = tff::funcTable[_getValue(addr)]; }
 
 // === EndNode ===
 

@@ -2,7 +2,7 @@
 #define STREAM_H
 
 #include "BTS.h"
-#include "tff.h"
+#include "TryteExpr.h"
 #include <iostream>
 
 namespace Stream {
@@ -36,12 +36,13 @@ struct StackStream : public Istream, public Ostream {
 
 // istream包装
 struct IstreamStd : public Ostream {
+    using FuncIn = BTS::Tryte (*)(std::istream &);
     IstreamStd() : istr(nullptr), func_in(nullptr){};
     IstreamStd(std::istream &_istr) : istr(&_istr){};
-    IstreamStd(std::istream &_istr, BTS::Tryte (*_func_in)(std::istream &)) : istr(&_istr), func_in(_func_in){};
+    IstreamStd(std::istream &_istr, FuncIn _func_in) : istr(&_istr), func_in(_func_in){};
     ~IstreamStd() = default;
-    std::istream *istr;                    // 输入流
-    BTS::Tryte (*func_in)(std::istream &); // 输入处理
+    std::istream *istr; // 输入流
+    FuncIn func_in;     // 输入处理
 
     Type_Stream type() override;
     BTS::Tryte out() override;
@@ -49,13 +50,13 @@ struct IstreamStd : public Ostream {
 
 // ostream包装
 struct OstreamStd : public Istream {
+    using FuncOut = void (*)(BTS::Tryte, std::ostream &);
     OstreamStd() : ostr(nullptr), func_out(nullptr){};
     OstreamStd(std::ostream &_ostr) : ostr(&_ostr){};
-    OstreamStd(std::ostream &_ostr, void (*_func_out)(BTS::Tryte, std::ostream &))
-        : ostr(&_ostr), func_out(_func_out){};
+    OstreamStd(std::ostream &_ostr, FuncOut _func_out) : ostr(&_ostr), func_out(_func_out){};
     ~OstreamStd() = default;
-    std::ostream *ostr;                           // 输出流
-    void (*func_out)(BTS::Tryte, std::ostream &); // 输出处理
+    std::ostream *ostr; // 输出流
+    FuncOut func_out;   // 输出处理
 
     Type_Stream type() override;
     void in(BTS::Tryte) override;

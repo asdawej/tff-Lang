@@ -6,7 +6,7 @@
 
 namespace Register {
 
-enum struct ID_ObjectStd;
+enum struct ID_ObjectStd { Key_stdin, Key_stdout, Key_stderr };
 
 extern std::map<ID_ObjectStd, void *> dict_Key2ObjectStd;
 

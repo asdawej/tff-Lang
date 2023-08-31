@@ -1,18 +1,30 @@
 #include "Stream.h"
+#include "tff.h"
 
 namespace Stream {
+
+// 辅助函数, 取表达式值
+BTS::Tryte _getValue(tff::TryteExpr expr) {
+    auto count = expr.suffix;
+    auto ret = expr.value;
+    while (count > 0) {
+        ret = tff::stack[ret];
+        count--;
+    }
+    return ret;
+}
 
 // === StackStream ===
 
 Type_Stream StackStream::type() { return Type_Stream::Type_StackStream; }
 
 void StackStream::in(BTS::Tryte data) {
-    tff::stack[stackAddr + size] = data;
+    tff::stack[_getValue(stackAddr) + size] = data;
     size++;
 }
 
 BTS::Tryte StackStream::out() {
-    auto &ret = tff::stack[stackAddr + size];
+    auto &ret = tff::stack[_getValue(stackAddr) + size];
     size++;
     return ret;
 }

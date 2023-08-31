@@ -3,7 +3,7 @@
 
 #include "BTS.h"
 #include "Stream.h"
-#include "tff.h"
+#include "TryteExpr.h"
 
 namespace Function {
 

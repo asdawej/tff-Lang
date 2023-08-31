@@ -3,12 +3,21 @@
 using namespace std;
 
 int main() {
-    Stream::StackStream s(tff::stack[0]);
-    for (auto i = 0; i < 5; i++)
-        s.in(Stream::stdinStream.out());
-    Stream::StackStream s1(tff::stack[0]);
-    for (auto i = 0; i < 5; i++)
-        Stream::stdoutStream.in(s1.out());
+    Function::StreamIONode n1, n2;
+    Function::EndNode n3;
+    n1.size = 5;
+    n1.str_O = (Stream::IstreamStd *)Register::dict_Key2ObjectStd[Register::ID_ObjectStd::Key_stdin];
+    n1.str_I = new Stream::StackStream(0);
+    n2.size = 5;
+    n2.str_O = new Stream::StackStream(0);
+    n2.str_I = (Stream::OstreamStd *)Register::dict_Key2ObjectStd[Register::ID_ObjectStd::Key_stdout];
+    n1.next = &n2;
+    n2.next = &n3;
+    Function::FunctionNode *ptr = &n1;
+    while (ptr) {
+        (*ptr)();
+        ptr = ptr->next;
+    }
     system("pause");
     return 0;
 }
