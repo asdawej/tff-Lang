@@ -1,7 +1,6 @@
 #include "Function.h"
 #include "AssistFunc.h"
 #include "Register.h"
-#include "tff.h"
 
 namespace Function {
 
@@ -106,8 +105,8 @@ void AssignNode::serialize(std::ostream &ostr) {
 }
 
 void AssignNode::deserialize(std::istream &istr) {
-    dest = AssistFunc::binaryOut<BTS::Tryte>(istr);
-    value = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    dest = AssistFunc::binaryOut<tff::TryteExpr>(istr);
+    value = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }
@@ -125,7 +124,7 @@ void ExecuteNode::serialize(std::ostream &ostr) {
 }
 
 void ExecuteNode::deserialize(std::istream &istr) {
-    addr = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    addr = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }
@@ -147,7 +146,7 @@ void DefineNode::serialize(std::ostream &ostr) {
 }
 
 void DefineNode::deserialize(std::istream &istr) {
-    addr = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    addr = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     func = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     func->deserialize(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
@@ -169,7 +168,7 @@ void ConditionNode::serialize(std::ostream &ostr) {
 }
 
 void ConditionNode::deserialize(std::istream &istr) {
-    cond = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    cond = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     func_T = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     func_T->deserialize(istr);
     func_F = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
@@ -235,7 +234,7 @@ void StreamIONode::deserialize(std::istream &istr) {
         str_I = new Stream::StackStream(tff::stack[AssistFunc::binaryOut<BTS::Tryte>(istr)]);
     else
         str_I = (Stream::Istream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
-    size = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    size = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }
@@ -253,7 +252,7 @@ void ReleaseNode::serialize(std::ostream &ostr) {
 }
 
 void ReleaseNode::deserialize(std::istream &istr) {
-    addr = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    addr = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }
@@ -272,8 +271,8 @@ void MoveNode::serialize(std::ostream &ostr) {
 }
 
 void MoveNode::deserialize(std::istream &istr) {
-    dest = AssistFunc::binaryOut<BTS::Tryte>(istr);
-    addr = AssistFunc::binaryOut<BTS::Tryte>(istr);
+    dest = AssistFunc::binaryOut<tff::TryteExpr>(istr);
+    addr = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }

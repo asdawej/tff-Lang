@@ -95,10 +95,10 @@ Tryte::Tryte(const int &i) {
 }
 
 char *Tryte::repr() {
-    char *ret = new char[9];
+    char *ret = new char[tryteTritNum + 1];
     for (auto i = 0; i < tryteTritNum; i++)
         ret[i] = trit2char(Trit(value[2 * i], value[2 * i + 1]));
-    ret[8] = '\0';
+    ret[tryteTritNum] = '\0';
     return ret;
 }
 

@@ -3,6 +3,7 @@
 
 #include "BTS.h"
 #include "Stream.h"
+#include "tff.h"
 
 namespace Function {
 
@@ -68,7 +69,7 @@ struct AtomNode : public FunctionNode {
 struct AssignNode : public FunctionNode {
     AssignNode() : dest(0), value(0){};
     ~AssignNode() = default;
-    BTS::Tryte dest, value; // 把value赋给dest地址
+    tff::TryteExpr dest, value; // 把value赋给dest地址
 
     Type_FunctionNode type() override;
     void operator()() override;
@@ -80,7 +81,7 @@ struct AssignNode : public FunctionNode {
 struct ExecuteNode : public FunctionNode {
     ExecuteNode() : addr(0){};
     ~ExecuteNode() = default;
-    BTS::Tryte addr; // 委托地址
+    tff::TryteExpr addr; // 委托地址
 
     Type_FunctionNode type() override;
     void operator()() override;
@@ -92,8 +93,8 @@ struct ExecuteNode : public FunctionNode {
 struct DefineNode : public FunctionNode {
     DefineNode() : addr(0), func(nullptr){};
     ~DefineNode() { delete func; };
-    BTS::Tryte addr;    // 委托地址
-    FunctionNode *func; // 代码树
+    tff::TryteExpr addr; // 委托地址
+    FunctionNode *func;  // 代码树
 
     Type_FunctionNode type() override;
     void operator()() override;
@@ -105,7 +106,7 @@ struct DefineNode : public FunctionNode {
 struct ConditionNode : public FunctionNode {
     ConditionNode() : cond(0), func_T(nullptr), func_F(nullptr){};
     ~ConditionNode() { delete func_T, func_F; };
-    BTS::Tryte cond;               // 条件
+    tff::TryteExpr cond;           // 条件
     FunctionNode *func_T, *func_F; // 正值代码树func_T，负值代码树func_F
 
     Type_FunctionNode type() override;
@@ -121,7 +122,7 @@ struct StreamIONode : public FunctionNode {
     // # StackStream需要刷新，待解决
     Stream::Ostream *str_O; // 输出流
     Stream::Istream *str_I; // 输入流
-    BTS::Tryte size;        // 三进制字节数
+    tff::TryteExpr size;    // 三进制字节数
 
     Type_FunctionNode type() override;
     void operator()() override;
@@ -133,7 +134,7 @@ struct StreamIONode : public FunctionNode {
 struct ReleaseNode : public FunctionNode {
     ReleaseNode() : addr(0){};
     ~ReleaseNode() = default;
-    BTS::Tryte addr; // 委托地址
+    tff::TryteExpr addr; // 委托地址
 
     Type_FunctionNode type() override;
     void operator()() override;
@@ -145,8 +146,8 @@ struct ReleaseNode : public FunctionNode {
 struct MoveNode : public FunctionNode {
     MoveNode() : dest(0), addr(0){};
     ~MoveNode() = default;
-    BTS::Tryte dest; // 传播地址
-    BTS::Tryte addr; // 委托地址
+    tff::TryteExpr dest; // 传播地址
+    tff::TryteExpr addr; // 委托地址
 
     Type_FunctionNode type() override;
     void operator()() override;

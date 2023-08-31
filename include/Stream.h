@@ -2,6 +2,7 @@
 #define STREAM_H
 
 #include "BTS.h"
+#include "tff.h"
 #include <iostream>
 
 namespace Stream {
