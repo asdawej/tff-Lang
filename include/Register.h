@@ -12,7 +12,7 @@ enum struct ID_ObjectStd {
     Key_stderr, // Stream::OstreamStd*
 };
 
-extern std::map<ID_ObjectStd, void *> dict_Key2ObjectStd;
+extern std::map<ID_ObjectStd, void *> dict_ID2ObjectStd;
 
 }; // namespace Register
 

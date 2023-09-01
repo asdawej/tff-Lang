@@ -77,13 +77,31 @@ StringWithIndex readUntilChar(ifstream &istr, const vector<char> &indexs) {
     return StringWithIndex{s, '\0'};
 }
 
+// 计数读取
+string readWithCount(ifstream &istr, const char left, const char right, size_t start_count) {
+    string s;
+    char c;
+    auto count = move(start_count);
+    while (!istr.eof()) {
+        c = readNext(istr);
+        if (c == left)
+            count++;
+        else if (c == right)
+            count--;
+        if (count == 0)
+            break;
+        s += c;
+    }
+    return s;
+}
+
 // 分析器主函数
 vector<string> analyzer(const char *tffl_file) {
     ifstream text_code(tffl_file);
     if (!text_code)
         throw(-1);
     vector<string> tokens;
-    auto append = [&](string &_str) { tokens.emplace_back(_str); };            // tokens插入string
+    auto append = [&](string &&_str) { tokens.emplace_back(_str); };           // tokens插入string
     auto appends = [&](const char *_s) { tokens.emplace_back(string(_s)); };   // tokens插入字符串
     auto appendc = [&](const char _c) { tokens.emplace_back(string(1, _c)); }; // tokens插入单字符
     auto rindexs = vector<char>{')', '}', ','};                                // 右侧标志
@@ -92,13 +110,10 @@ vector<string> analyzer(const char *tffl_file) {
         c = readNext(text_code);
         switch (c) {
         case '{':
-        case '(':
         case '}':
         case ')':
-        case ',':
         case '0':
         case '1':
-        case '2':
         case '3':
         case '4':
         case '5':
@@ -108,12 +123,20 @@ vector<string> analyzer(const char *tffl_file) {
         case '9': {
             appendc(c);
         } break;
+        case '(': {
+            appendc('(');
+            append(readWithCount(text_code, '(', ')', 1));
+            appendc(')');
+        } break;
+        case ',': {
+        } break;
         default: {
             string str(1, c);
             auto &&strWithIndex = readUntilChar(text_code, rindexs);
             str += strWithIndex.str;
-            append(str);
-            appendc(strWithIndex.index);
+            append(move(str));
+            if (strWithIndex.index != ',')
+                appendc(strWithIndex.index);
         } break;
         };
     }

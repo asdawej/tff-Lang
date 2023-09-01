@@ -3,7 +3,7 @@
 
 namespace Register {
 
-std::map<ID_ObjectStd, void *> dict_Key2ObjectStd{{ID_ObjectStd::Key_stdin, &Stream::stdinStream},
+std::map<ID_ObjectStd, void *> dict_ID2ObjectStd{{ID_ObjectStd::Key_stdin, &Stream::stdinStream},
                                                   {ID_ObjectStd::Key_stdout, &Stream::stdoutStream},
                                                   {ID_ObjectStd::Key_stderr, &Stream::stderrStream}};
 

@@ -10,11 +10,11 @@ namespace tff {
 
 constexpr int stackLength = 2 * BTS::maxValue + 1;
 
-using funcTree = Function::FunctionNode *;
+using FuncTree = Function::FunctionNode *;
 // 内存栈
 extern BTS::Tryte *stack;
 // 代码树表
-extern funcTree *funcTable;
+extern FuncTree *funcTable;
 
 }; // namespace tff
 

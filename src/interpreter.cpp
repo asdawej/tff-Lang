@@ -9,6 +9,6 @@ void interpreter(const char *tffb_file) {
         return;
     auto *root = Function::factory_FunctionNode(AssistFunc::binaryOut<Function::Type_FunctionNode>(compiled_code));
     root->deserialize(compiled_code);
-    (*root)();
     compiled_code.close();
+    (*root)();
 }

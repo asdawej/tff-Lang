@@ -243,7 +243,7 @@ void StreamIONode::serialize(std::ostream &ostr) {
         AssistFunc::binaryIn(ostr, _str_O_stack.stackAddr);
     } else { // 标准输入流输出
         auto *_str_O_IStd = dynamic_cast<Stream::IstreamStd *>(str_O);
-        for (auto &_pr : Register::dict_Key2ObjectStd) {
+        for (auto &_pr : Register::dict_ID2ObjectStd) {
             if (_pr.second == _str_O_IStd) {
                 AssistFunc::binaryIn(ostr, _pr.first);
                 break;
@@ -256,7 +256,7 @@ void StreamIONode::serialize(std::ostream &ostr) {
         AssistFunc::binaryIn(ostr, _str_I_stack.stackAddr);
     } else { // 标准输出流输入
         auto *_str_I_OStd = dynamic_cast<Stream::OstreamStd *>(str_I);
-        for (auto &_pr : Register::dict_Key2ObjectStd) {
+        for (auto &_pr : Register::dict_ID2ObjectStd) {
             if (_pr.second == _str_I_OStd) {
                 AssistFunc::binaryIn(ostr, _pr.first);
                 break;
@@ -271,11 +271,11 @@ void StreamIONode::deserialize(std::istream &istr) {
     if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream) // 栈输出
         str_O = new Stream::StackStream(AssistFunc::binaryOut<tff::TryteExpr>(istr));
     else // 标准输入流输出
-        str_O = (Stream::Ostream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
+        str_O = (Stream::Ostream *)Register::dict_ID2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
     if (AssistFunc::binaryOut<Stream::Type_Stream>(istr) == Stream::Type_Stream::Type_StackStream) // 栈输入
         str_I = new Stream::StackStream(AssistFunc::binaryOut<tff::TryteExpr>(istr));
     else // 标准输出流输入
-        str_I = (Stream::Istream *)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
+        str_I = (Stream::Istream *)Register::dict_ID2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
     size = AssistFunc::binaryOut<tff::TryteExpr>(istr);
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
@@ -358,7 +358,7 @@ Type_FunctionNode StdFunctionNode::type() { return Type_FunctionNode::Type_StdFu
 
 void StdFunctionNode::serialize(std::ostream &ostr) {
     AssistFunc::binaryIn(ostr, type());
-    for (auto &_pr : Register::dict_Key2ObjectStd) {
+    for (auto &_pr : Register::dict_ID2ObjectStd) {
         if (_pr.second == func) {
             AssistFunc::binaryIn(ostr, _pr.first);
             break;
@@ -368,7 +368,7 @@ void StdFunctionNode::serialize(std::ostream &ostr) {
 }
 
 void StdFunctionNode::deserialize(std::istream &istr) {
-    func = (Func)Register::dict_Key2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
+    func = (Func)Register::dict_ID2ObjectStd[AssistFunc::binaryOut<Register::ID_ObjectStd>(istr)];
     next = factory_FunctionNode(AssistFunc::binaryOut<Type_FunctionNode>(istr));
     next->deserialize(istr);
 }
