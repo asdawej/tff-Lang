@@ -119,7 +119,7 @@ struct ConditionNode : public FunctionNode {
 // `7`结点, 导通两个流
 struct StreamIONode : public FunctionNode {
     StreamIONode() : str_I(nullptr), str_O(nullptr), size(0){};
-    ~StreamIONode() = default;
+    ~StreamIONode();
     Stream::Ostream *str_O; // 输出流
     Stream::Istream *str_I; // 输入流
     tff::TryteExpr size;    // 三进制字节数

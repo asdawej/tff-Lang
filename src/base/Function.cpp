@@ -226,6 +226,13 @@ void ConditionNode::operator()() {
 
 // === StreamIONode ===
 
+StreamIONode::~StreamIONode() {
+    if (str_O->type() == Stream::Type_Stream::Type_StackStream)
+        delete str_O;
+    if (str_I->type() == Stream::Type_Stream::Type_StackStream)
+        delete str_I;
+}
+
 Type_FunctionNode StreamIONode::type() { return Type_FunctionNode::Type_StreamIONode; }
 
 void StreamIONode::serialize(std::ostream &ostr) {

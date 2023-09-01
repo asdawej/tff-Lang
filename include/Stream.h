@@ -11,6 +11,7 @@ enum struct Type_Stream { Type_StackStream, Type_IstreamStd, Type_OstreamStd };
 
 // 流类型基类, 提供类型反射
 struct StreamBase {
+    virtual ~StreamBase() = default;
     virtual Type_Stream type() = 0;
 };
 

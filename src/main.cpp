@@ -1,44 +1,71 @@
-#include "tff.h"
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
 
-std::vector<std::string> analyzer(const char *tffl_file);
+vector<string> analyzer(const char *tffl_file);
 void compiler(std::vector<std::string> tokens, const char *tffb_file);
 void interpreter(const char *tffb_file);
 
-// ******
+int main(int argc, const char *argv[]) {
+    char *tffl_file;
+    char *tffb_file;
+    if (argc > 2) {
+        if (!strcasecmp("-c", argv[1])) {
+            if (argc == 3) {
+                auto len = strlen(argv[2]);
+                tffl_file = new char[len + 1];
+                strcpy(tffl_file, argv[2]);
+                tffb_file = new char[len + 1];
+                strcpy(tffb_file, argv[2]);
+                tffb_file[len - 1] = 'b';
+            } else if (argc >= 4) {
+                auto len1 = strlen(argv[2]);
+                auto len2 = strlen(argv[3]);
+                tffl_file = new char[len1 + 1];
+                strcpy(tffl_file, argv[2]);
+                tffb_file = new char[len2 + 1];
+                strcpy(tffb_file, argv[3]);
+            }
+            compiler(analyzer(tffl_file), tffb_file);
+            delete tffl_file, tffb_file;
+        } else if (!strcasecmp("-r", argv[1])) {
+            auto len = strlen(argv[2]);
+            tffb_file = new char[len + 1];
+            strcpy(tffb_file, argv[2]);
+            interpreter(tffb_file);
+        } else if (!strcasecmp("-cr", argv[1])) {
+            if (argc == 3) {
+                auto len = strlen(argv[2]);
+                tffl_file = new char[len + 1];
+                strcpy(tffl_file, argv[2]);
+                tffb_file = new char[len + 1];
+                strcpy(tffb_file, argv[2]);
+                tffb_file[len - 1] = 'b';
+            } else if (argc >= 4) {
+                auto len1 = strlen(argv[2]);
+                auto len2 = strlen(argv[3]);
+                tffl_file = new char[len1 + 1];
+                strcpy(tffl_file, argv[2]);
+                tffb_file = new char[len2 + 1];
+                strcpy(tffb_file, argv[3]);
+            }
+            compiler(analyzer(tffl_file), tffb_file);
+            interpreter(tffb_file);
+            delete tffl_file, tffb_file;
+        } else
+            goto L_ARGWRONG;
+    } else
+        goto L_ARGFEW;
 
-void add() { tff::stack[-1] = tff::stack[1] + tff::stack[2]; }
-
-int main() {
-    Register::dict_Key2ObjectStd[Register::ID_ObjectStd::Key_add] = (void *)add;
-    Function::StreamIONode n1;
-    Function::StdFunctionNode n2;
-    Function::StreamIONode n3;
-    Function::EndNode n0;
-    n1.size = 2;
-    n1.str_O = &Stream::stdinStream;
-    n1.str_I = new Stream::StackStream(1);
-    n2.func = add;
-    n3.size = 1;
-    n3.str_O = new Stream::StackStream(-1);
-    n3.str_I = &Stream::stdoutStream;
-    n1.next = &n2;
-    n2.next = &n3;
-    n3.next = &n0;
-    ofstream f1("1.dat", ios::binary);
-    n1.serialize(f1);
-    f1.close();
-    ifstream f2("1.dat", ios::binary);
-    Function::FunctionNode *root =
-        Function::factory_FunctionNode(AssistFunc::binaryOut<Function::Type_FunctionNode>(f2));
-    root->deserialize(f2);
-    f2.close();
-    (*root)();
-    system("pause");
-    delete root;
+L_RETURN:
+    return 0;
+L_ARGWRONG:
+    cout << "Arguments wrong!" << endl;
+    return 0;
+L_ARGFEW:
+    cout << "More arguments needed!" << endl;
     return 0;
 }
