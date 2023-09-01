@@ -6,7 +6,7 @@
 using namespace std;
 
 vector<string> analyzer(const char *tffl_file);
-void compiler(std::vector<std::string> tokens, const char *tffb_file);
+void compiler(vector<string> tokens, const char *tffb_file);
 void interpreter(const char *tffb_file);
 
 int main(int argc, const char *argv[]) {
