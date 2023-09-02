@@ -179,7 +179,7 @@ tff::FuncTree createFuncTree(TokenPtr &treeStart, TokenPtr &vecEnd) {
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->cond);
             funcParse(cur->func_T);
-            treeStart++;
+            // treeStart++;
             funcParse(cur->func_F);
             endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "7") { // StreamIONode
@@ -203,10 +203,12 @@ tff::FuncTree createFuncTree(TokenPtr &treeStart, TokenPtr &vecEnd) {
             exprParse(cur->dest);
             exprParse(cur->addr);
             endCreateNode(treeStart, count, vecEnd);
-        } else
-            count_f(tk);
-        if (count == 0)
+        }
+        count_f(*treeStart);
+        if (count == 0) {
+            treeStart++;
             break;
+        }
     }
     slow->next = new Function::EndNode;
     return root;
