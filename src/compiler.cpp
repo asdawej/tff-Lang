@@ -52,8 +52,20 @@ void startCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
     }
 }
 
+// 后置大括号处理
+void endCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
+    while (treeStart != vecEnd) {
+        if (*treeStart == "}") {
+            count--;
+            treeStart++;
+            break;
+        }
+        treeStart++;
+    }
+}
+
 // 构造代码树
-tff::FuncTree createFuncTree(TokenPtr &&treeStart, TokenPtr &&vecEnd) {
+tff::FuncTree createFuncTree(TokenPtr &treeStart, TokenPtr &vecEnd) {
     size_t count = 1;
     auto count_f = [&](string &_tk) { // 计数处理
         if (_tk == "{")
@@ -79,7 +91,7 @@ tff::FuncTree createFuncTree(TokenPtr &&treeStart, TokenPtr &&vecEnd) {
     auto bigFuncParse = [&](tff::FuncTree &func) { // 单结点成员解析
         if (*treeStart == "{") {
             treeStart++;
-            func = createFuncTree(move(treeStart), move(vecEnd));
+            func = createFuncTree(treeStart, vecEnd);
         } else if (*treeStart == "(") {
             auto _func = new Function::StdFunctionNode;
             _func->func = (StdFunc)token2ObjectStd(treeStart, vecEnd);
@@ -87,13 +99,13 @@ tff::FuncTree createFuncTree(TokenPtr &&treeStart, TokenPtr &&vecEnd) {
             func = _func;
         } else {
             count--;
-            func = createFuncTree(move(treeStart), move(vecEnd));
+            func = createFuncTree(treeStart, vecEnd);
         }
     };
     auto funcParse = [&](tff::FuncTree &func) { // 一般结点成员解析
         if (*treeStart == "{") {
             treeStart++;
-            func = createFuncTree(move(treeStart), move(vecEnd));
+            func = createFuncTree(treeStart, vecEnd);
         } else if (*treeStart == "(") {
             auto _func = new Function::StdFunctionNode;
             _func->func = (StdFunc)token2ObjectStd(treeStart, vecEnd);
@@ -134,35 +146,42 @@ tff::FuncTree createFuncTree(TokenPtr &&treeStart, TokenPtr &&vecEnd) {
             auto *cur = dynamic_cast<Function::ThreadNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             bigFuncParse(cur->thread);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "1") { // AtomNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::AtomNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             bigFuncParse(cur->atom);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "3") { // AssignNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::AssignNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->dest);
             exprParse(cur->value);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "4") { // ExecuteNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::ExecuteNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->addr);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "5") { // DefineNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::DefineNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->addr);
             funcParse(cur->func);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "6") { // ConditionNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::ConditionNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->cond);
             funcParse(cur->func_T);
+            treeStart++;
             funcParse(cur->func_F);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "7") { // StreamIONode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::StreamIONode *>(ptr);
@@ -170,22 +189,24 @@ tff::FuncTree createFuncTree(TokenPtr &&treeStart, TokenPtr &&vecEnd) {
             ostrParse(cur->str_O);
             istrParse(cur->str_I);
             exprParse(cur->size);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "8") { // ReleaseNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::ReleaseNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->addr);
+            endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "9") { // MoveNode
             ptr_f(tk);
             auto *cur = dynamic_cast<Function::MoveNode *>(ptr);
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->dest);
             exprParse(cur->addr);
+            endCreateNode(treeStart, count, vecEnd);
         } else
             count_f(tk);
         if (count == 0)
             break;
-        treeStart++;
     }
     slow->next = new Function::EndNode;
     return root;
@@ -196,7 +217,8 @@ void compiler(vector<string> &&tokens, const char *tffb_file) {
     if (tokens.empty())
         return;
     tokens.emplace_back(string("}"));
-    auto &&root = createFuncTree(tokens.begin(), tokens.end());
+    auto &&treeStart = tokens.begin(), &&vecEnd = tokens.end();
+    auto &&root = createFuncTree(treeStart, vecEnd);
     ofstream compiled_code(tffb_file, ios::binary);
     root->serialize(compiled_code);
     compiled_code.close();

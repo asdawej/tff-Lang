@@ -158,8 +158,7 @@ void ExecuteNode::deserialize(std::istream &istr) {
 }
 
 void ExecuteNode::operator()() {
-    FunctionNode::connect(tff::funcTable[_getValue(addr)], next);
-    next = tff::funcTable[_getValue(addr)];
+    (*tff::funcTable[_getValue(addr)])();
     if (next)
         (*next)();
 }
@@ -213,13 +212,10 @@ void ConditionNode::deserialize(std::istream &istr) {
 
 void ConditionNode::operator()() {
     auto &&_cond = _getValue(cond);
-    if (_cond > 0) {
-        FunctionNode::connect(func_T, next);
-        next = func_T;
-    } else if (_cond < 0) {
-        FunctionNode::connect(func_F, next);
-        next = func_F;
-    }
+    if (_cond > 0)
+        (*func_T)();
+    else if (_cond < 0)
+        (*func_F)();
     if (next)
         (*next)();
 }
@@ -289,9 +285,9 @@ void StreamIONode::operator()() {
     }
     // 栈流恢复
     if (str_I->type() == Stream::Type_Stream::Type_StackStream)
-        ((Stream::StackStream *)str_I)->size = 0;
+        dynamic_cast<Stream::StackStream *>(str_I)->size = 0;
     if (str_O->type() == Stream::Type_Stream::Type_StackStream)
-        ((Stream::StackStream *)str_O)->size = 0;
+        dynamic_cast<Stream::StackStream *>(str_O)->size = 0;
     if (next)
         (*next)();
 }
