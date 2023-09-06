@@ -133,10 +133,12 @@ vector<string> analyzer(const char *tffl_file) {
         default: {
             string str(1, c);
             auto &&strWithIndex = readUntilChar(text_code, rindexs);
-            str += strWithIndex.str;
-            append(move(str));
-            if (strWithIndex.index != ',')
-                appendc(strWithIndex.index);
+            if (strWithIndex.index) {
+                str += strWithIndex.str;
+                append(move(str));
+                if (strWithIndex.index != ',')
+                    appendc(strWithIndex.index);
+            }
         } break;
         };
     }

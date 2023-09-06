@@ -42,7 +42,7 @@ string tokenInBracket(TokenPtr &tkCur, TokenPtr &vecEnd) {
 
 // 前置大括号处理
 void startCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
-    while (treeStart != vecEnd) {
+    while (treeStart < vecEnd) {
         if (*treeStart == "{") {
             count++;
             treeStart++;
@@ -54,7 +54,7 @@ void startCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
 
 // 后置大括号处理
 void endCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
-    while (treeStart != vecEnd) {
+    while (treeStart < vecEnd) {
         if (*treeStart == "}") {
             count--;
             treeStart++;
@@ -138,7 +138,7 @@ tff::FuncTree createFuncTree(TokenPtr &treeStart, TokenPtr &vecEnd) {
         }
     };
 
-    while (treeStart != vecEnd) {
+    while (treeStart < vecEnd) {
         auto &tk = *treeStart;
         // 结点处理
         if (tk == "0") { // ThreadNode
@@ -179,7 +179,6 @@ tff::FuncTree createFuncTree(TokenPtr &treeStart, TokenPtr &vecEnd) {
             startCreateNode(treeStart, count, vecEnd);
             exprParse(cur->cond);
             funcParse(cur->func_T);
-            // treeStart++;
             funcParse(cur->func_F);
             endCreateNode(treeStart, count, vecEnd);
         } else if (tk == "7") { // StreamIONode
