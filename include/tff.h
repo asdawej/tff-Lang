@@ -3,8 +3,8 @@
 
 #include "BTS.h"
 #include "Function.h"
-#include "Register.h"
 #include "Stream.h"
+#include "std/Register.h"
 
 namespace tff {
 

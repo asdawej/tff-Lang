@@ -66,10 +66,6 @@ struct OstreamStd : public Istream {
     void in(BTS::Tryte) override;
 };
 
-extern IstreamStd stdinStream;  // stdin包装
-extern OstreamStd stdoutStream; // stdout包装
-extern OstreamStd stderrStream; // stderr包装
-
 }; // namespace Stream
 
 #endif

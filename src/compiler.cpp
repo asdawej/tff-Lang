@@ -5,19 +5,6 @@
 #include <vector>
 using namespace std;
 
-using TP_FuncNode = Function::Type_FunctionNode;
-using TP_Stream = Stream::Type_Stream;
-using ID = Register::ID_ObjectStd;
-
-// 结点反射
-map<string, TP_FuncNode> dict_Token2Node{
-    {"0", TP_FuncNode::Type_ThreadNode},   {"1", TP_FuncNode::Type_AtomNode},    {"3", TP_FuncNode::Type_AssignNode},
-    {"4", TP_FuncNode::Type_ExecuteNode},  {"5", TP_FuncNode::Type_DefineNode},  {"6", TP_FuncNode::Type_ConditionNode},
-    {"7", TP_FuncNode::Type_StreamIONode}, {"8", TP_FuncNode::Type_ReleaseNode}, {"9", TP_FuncNode::Type_MoveNode}};
-
-// ID反射
-map<string, ID> dict_Token2ID{{"stdin", ID::Key_stdin}, {"stdout", ID::Key_stdout}, {"stderr", ID::Key_stderr}};
-
 using TokenPtr = vector<string>::iterator;
 using StdFunc = Function::StdFunctionNode::Func;
 auto factory = Function::factory_FunctionNode;
@@ -26,7 +13,7 @@ auto factory = Function::factory_FunctionNode;
 void *token2ObjectStd(TokenPtr &tkCur, TokenPtr &vecEnd) {
     if (*tkCur == "(")
         tkCur++;
-    auto ret = Register::dict_ID2ObjectStd[dict_Token2ID[*tkCur]];
+    auto ret = Register::dict_ID2ObjectStd[Register::dict_Token2ID[*tkCur]];
     tkCur += 2;
     return ret;
 }
@@ -77,11 +64,11 @@ tff::FuncTree createFuncTree(TokenPtr &treeStart, TokenPtr &vecEnd) {
     auto *ptr = root, *slow = root;
     auto ptr_f = [&](string &_tk) { // 结点指针控制
         if (!root) {
-            root = factory(move(dict_Token2Node[*treeStart]));
+            root = factory(move(Register::dict_Token2Node[*treeStart]));
             slow = root;
             ptr = root;
         } else {
-            ptr = factory(move(dict_Token2Node[_tk]));
+            ptr = factory(move(Register::dict_Token2Node[_tk]));
             slow->next = ptr;
             slow = slow->next;
         }
