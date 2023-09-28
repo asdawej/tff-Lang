@@ -22,6 +22,10 @@ bool isWhite(const char c) {
     }
 }
 
+// 读取至EOF的信号
+const struct {
+} ReadEOFSignal;
+
 // 读取下一个非空白、非注释字符
 char readNext(ifstream &istr) {
     char c;
@@ -41,6 +45,7 @@ char readNext(ifstream &istr) {
             continue;
         return c;
     }
+    throw(ReadEOFSignal);
 }
 
 // 非空白、非注释读取至特定字符(不包含)
@@ -107,40 +112,44 @@ vector<string> analyzer(const char *tffl_file) {
     auto rindexs = vector<char>{')', '}', ','};                                // 右侧标志
     char c;
     while (!text_code.eof()) {
-        c = readNext(text_code);
-        switch (c) {
-        case '{':
-        case '}':
-        case ')':
-        case '0':
-        case '1':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9': {
-            appendc(c);
-        } break;
-        case '(': {
-            appendc('(');
-            append(readWithCount(text_code, '(', ')', 1));
-            appendc(')');
-        } break;
-        case ',': {
-        } break;
-        default: {
-            string str(1, c);
-            auto &&strWithIndex = readUntilChar(text_code, rindexs);
-            if (strWithIndex.index) {
-                str += strWithIndex.str;
-                append(move(str));
-                if (strWithIndex.index != ',')
-                    appendc(strWithIndex.index);
-            }
-        } break;
-        };
+        try {
+            c = readNext(text_code);
+            switch (c) {
+            case '{':
+            case '}':
+            case ')':
+            case '0':
+            case '1':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9': {
+                appendc(c);
+            } break;
+            case '(': {
+                appendc('(');
+                append(readWithCount(text_code, '(', ')', 1));
+                appendc(')');
+            } break;
+            case ',': {
+            } break;
+            default: {
+                string str(1, c);
+                auto &&strWithIndex = readUntilChar(text_code, rindexs);
+                if (strWithIndex.index) {
+                    str += strWithIndex.str;
+                    append(move(str));
+                    if (strWithIndex.index != ',')
+                        appendc(strWithIndex.index);
+                }
+            } break;
+            };
+        } catch (decltype(ReadEOFSignal)) {
+            break;
+        }
     }
     text_code.close();
     return tokens;
