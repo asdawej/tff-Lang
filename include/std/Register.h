@@ -11,7 +11,12 @@ enum struct ID_ObjectStd {
     Key_stdin,  // Stream::IstreamStd*
     Key_stdout, // Stream::OstreamStd*
     Key_stderr, // Stream::OstreamStd*
-    Key_add
+    Key_add,
+    Key_sub,
+    Key_mul,
+    Key_div,
+    Key_mod,
+    Key_sleep
 };
 
 extern std::map<ID_ObjectStd, void *> dict_ID2ObjectStd;
