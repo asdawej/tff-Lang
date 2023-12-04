@@ -14,11 +14,11 @@ constexpr int pow2(int x) {
 }
 
 // 左值二进制写入
-void binaryIn(std::ostream &ostr, auto &data) { ostr.write((char *)&data, sizeof(data)); }
+inline void binaryIn(std::ostream &ostr, auto &data) { ostr.write((char *)&data, sizeof(data)); }
 // 右值二进制写入
-void binaryIn(std::ostream &ostr, auto &&data) { ostr.write((char *)&data, sizeof(data)); }
+inline void binaryIn(std::ostream &ostr, auto &&data) { ostr.write((char *)&data, sizeof(data)); }
 // 二进制读出
-template <typename _T> _T binaryOut(std::istream &istr) {
+template <typename _T> inline _T binaryOut(std::istream &istr) {
     _T data;
     istr.read((char *)&data, sizeof(data));
     return data;

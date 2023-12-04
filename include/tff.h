@@ -10,11 +10,18 @@ namespace tff {
 
 constexpr int stackLength = 2 * BTS::maxValue + 1;
 
-using FuncTree = Function::FunctionNode *;
+using FuncTree = Function::FunctionNode *; // 代码树
+
 // 内存栈
-extern BTS::Tryte *stack;
+inline BTS::Tryte *stack = &(BTS::Tryte[stackLength]){}[BTS::maxValue];
+
 // 代码树表
-extern FuncTree *funcTable;
+inline FuncTree *funcTable = &(FuncTree[stackLength]){}[BTS::maxValue];
+
+enum struct FuncStatus { normal, fork, lock };
+
+// 代码树线程状态
+inline FuncStatus *funcStatusTable = &(FuncStatus[stackLength]){}[BTS::maxValue];
 
 }; // namespace tff
 

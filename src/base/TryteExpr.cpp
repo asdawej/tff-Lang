@@ -33,7 +33,7 @@ char *TryteExpr::repr() {
     char *s_value = value.repr();
     std::copy(s_value, s_value + BTS::tryteTritNum, ret);
     delete[] s_value;
-    for (auto i = BTS::tryteTritNum; i < BTS::tryteTritNum + suffix; i++)
+    for (size_t i = BTS::tryteTritNum; i < BTS::tryteTritNum + suffix; i++)
         ret[i] = '2';
     ret[BTS::tryteTritNum + suffix] = '\0';
     return ret;

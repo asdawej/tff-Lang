@@ -2,8 +2,8 @@
 #include "tff.h"
 #include <chrono>
 
-#ifdef __MINGW32__
-#include <mingw.thread.h> // https://github.com/meganz/mingw-std-threads
+#ifdef __MINGW32__ // https://github.com/meganz/mingw-std-threads
+#include <mingw.thread.h>
 #else
 #include <thread>
 #endif

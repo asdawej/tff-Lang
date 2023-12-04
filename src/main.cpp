@@ -30,7 +30,7 @@ int main(int argc, const char *argv[]) {
                 strcpy(tffb_file, argv[3]);
             }
             compiler(analyzer(tffl_file), tffb_file);
-            delete tffl_file, tffb_file;
+            delete tffl_file, delete tffb_file;
         } else if (!strcasecmp("-r", argv[1])) {
             auto len = strlen(argv[2]);
             tffb_file = new char[len + 1];
@@ -54,7 +54,7 @@ int main(int argc, const char *argv[]) {
             }
             compiler(analyzer(tffl_file), tffb_file);
             interpreter(tffb_file);
-            delete tffl_file, tffb_file;
+            delete tffl_file, delete tffb_file;
         } else
             goto L_ARGWRONG;
     } else
