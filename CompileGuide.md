@@ -4,7 +4,7 @@
 
 ```bash
 g++ -std=c++17
-    -fconcepts -Wno-return-type
+    -fconcepts
     -shared -fpic
     ./src/base/*.cpp ./src/std/*.cpp
     -I ./include
@@ -15,21 +15,21 @@ g++ -std=c++17
 
 ```bash
 g++ -std=c++17
-    -fconcepts -Wno-return-type
+    -fconcepts
     -shared -fpic
     ./src/analyzer.cpp ./dist/base.dll
     -I ./include
     -o ./dist/analyzer.dll
 
 g++ -std=c++17
-    -fconcepts -Wno-return-type
+    -fconcepts
     -shared -fpic
     ./src/compiler.cpp ./dist/base.dll
     -I ./include
     -o ./dist/compiler.dll
 
 g++ -std=c++17
-    -fconcepts -Wno-return-type
+    -fconcepts
     -shared -fpic
     ./src/interpreter.cpp ./dist/base.dll
     -I ./include
@@ -40,10 +40,10 @@ g++ -std=c++17
 
 ```bash
 g++ -std=c++17
-    -fconcepts -Wno-return-type
+    -fconcepts
     ./src/main.cpp ./dist/*.dll
     -I ./include
     -o ./dist/tff.exe
 ```
 
-_关于编译优化选项, 我推荐 `-O3` 和 `-Ofast`, 编译大小较小 (其中 `-O3` 编译产物最小) 的同时运行速度较快; 根据试验, `-O2` (加法示例代码不可用) 和 `-Os` (条件循环示例代码不可用) 选项不可使用._
+_关于编译优化选项, 经实验, 可以使用 `-O3` 选项._
