@@ -11,5 +11,4 @@ void interpreter(const char *tffb_file) {
     root->deserialize(compiled_code);
     compiled_code.close();
     (*root)();
-    system("pause");
 }

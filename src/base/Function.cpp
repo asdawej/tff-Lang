@@ -3,6 +3,14 @@
 #include "std/Register.h"
 #include "tff.h"
 
+#ifdef __MINGW32__ // https://github.com/meganz/mingw-std-threads
+#include <mingw.mutex.h>
+#include <mingw.thread.h>
+#else
+#include <mutex>
+#include <thread>
+#endif
+
 namespace Function {
 
 FunctionNode *factory_FunctionNode(Type_FunctionNode &&_tp) {
@@ -43,6 +51,7 @@ FunctionNode *factory_FunctionNode(Type_FunctionNode &&_tp) {
     default:
         break;
     }
+    return nullptr;
 }
 
 FunctionNode::NodePair FunctionNode::findEndNode(FunctionNode *start) {

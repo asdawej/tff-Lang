@@ -4,7 +4,7 @@
 namespace Stream {
 
 // 辅助函数, 取表达式值
-BTS::Tryte _getValue(tff::TryteExpr expr) {
+inline BTS::Tryte _getValue(tff::TryteExpr expr) {
     auto count = expr.suffix;
     auto ret = expr.value;
     while (count > 0) {

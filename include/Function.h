@@ -49,7 +49,7 @@ struct ThreadNode : public FunctionNode {
     FunctionNode *thread; // 子线程代码树
 
     Type_FunctionNode type() override;
-    void operator()() override; // # 暂时无法实现
+    void operator()() override;
     void serialize(std::ostream &) override;
     void deserialize(std::istream &) override;
 };
@@ -61,7 +61,7 @@ struct AtomNode : public FunctionNode {
     FunctionNode *atom; // 原子操作代码树
 
     Type_FunctionNode type() override;
-    void operator()() override; // # 暂时无法实现
+    void operator()() override;
     void serialize(std::ostream &) override;
     void deserialize(std::istream &) override;
 };
@@ -106,7 +106,7 @@ struct DefineNode : public FunctionNode {
 // `6`结点, 条件转移
 struct ConditionNode : public FunctionNode {
     ConditionNode() : cond(0), func_T(nullptr), func_F(nullptr){};
-    ~ConditionNode() { delete func_T, func_F; };
+    ~ConditionNode() { delete func_T, delete func_F; };
     tff::TryteExpr cond;           // 条件
     FunctionNode *func_T, *func_F; // 正值代码树func_T，负值代码树func_F
 
@@ -118,7 +118,7 @@ struct ConditionNode : public FunctionNode {
 
 // `7`结点, 导通两个流
 struct StreamIONode : public FunctionNode {
-    StreamIONode() : str_I(nullptr), str_O(nullptr), size(0){};
+    StreamIONode() : str_O(nullptr), str_I(nullptr), size(0){};
     ~StreamIONode();
     Stream::Ostream *str_O; // 输出流
     Stream::Istream *str_I; // 输入流

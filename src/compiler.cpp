@@ -10,7 +10,7 @@ using StdFunc = Function::StdFunctionNode::Func;
 auto factory = Function::factory_FunctionNode;
 
 // 标准对象转义处理
-void *token2ObjectStd(TokenPtr &tkCur, TokenPtr &vecEnd) {
+inline void *token2ObjectStd(TokenPtr &tkCur, TokenPtr &vecEnd) {
     if (*tkCur == "(")
         tkCur++;
     auto ret = Register::dict_ID2ObjectStd[Register::dict_Token2ID[*tkCur]];
@@ -19,7 +19,7 @@ void *token2ObjectStd(TokenPtr &tkCur, TokenPtr &vecEnd) {
 }
 
 // 小括号内部提取
-string tokenInBracket(TokenPtr &tkCur, TokenPtr &vecEnd) {
+inline string tokenInBracket(TokenPtr &tkCur, TokenPtr &vecEnd) {
     if (*tkCur == "(")
         tkCur++;
     auto ret = *tkCur;
@@ -28,7 +28,7 @@ string tokenInBracket(TokenPtr &tkCur, TokenPtr &vecEnd) {
 }
 
 // 前置大括号处理
-void startCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
+inline void startCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
     while (treeStart < vecEnd) {
         if (*treeStart == "{") {
             count++;
@@ -40,7 +40,7 @@ void startCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
 }
 
 // 后置大括号处理
-void endCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
+inline void endCreateNode(TokenPtr &treeStart, size_t &count, TokenPtr &vecEnd) {
     while (treeStart < vecEnd) {
         if (*treeStart == "}") {
             count--;
