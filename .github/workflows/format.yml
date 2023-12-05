@@ -1,0 +1,15 @@
+name: format
+
+on: [push, pull_request]
+
+jobs:
+  clang-format-checking:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: DoozyX/clang-format-lint-action@v0.15
+      with:
+        source: '.'
+        extensions: 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx,i,ixx,ipp,i++'
+        clangFormatVersion: 14
+        inplace: False
