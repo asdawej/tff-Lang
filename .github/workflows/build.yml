@@ -14,6 +14,8 @@ jobs:
       - name: Build Base DLL
         run: |
           g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/base/*.cpp src/std/*.cpp -I include -o base.dll
+          mkdir dist
+          mv base.dll dist/
 
   build_analyzer:
     name: Build Analyzer DLL
@@ -26,7 +28,8 @@ jobs:
 
       - name: Build Analyzer DLL
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/analyzer.cpp base.dll -I include -o analyzer.dll
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/analyzer.cpp dist/base.dll -I include -o analyzer.dll
+          mv analyzer.dll dist/
 
   build_compiler:
     name: Build Compiler DLL
@@ -39,7 +42,8 @@ jobs:
 
       - name: Build Compiler DLL
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/compiler.cpp base.dll -I include -o compiler.dll
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/compiler.cpp dist/base.dll -I include -o compiler.dll
+          mv compiler.dll dist/
 
   build_interpreter:
     name: Build Interpreter DLL
@@ -52,7 +56,8 @@ jobs:
 
       - name: Build Interpreter DLL
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/interpreter.cpp base.dll -I include -o interpreter.dll
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/interpreter.cpp dist/base.dll -I include -o interpreter.dll
+          mv interpreter.dll dist/
 
   build_main:
     name: Build Main EXE
@@ -65,4 +70,4 @@ jobs:
 
       - name: Build Main EXE
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall src/main.cpp *.dll -I include -o tff.exe
+          g++ -O3 -std=c++17 -fconcepts -Wall src/main.cpp dist/*.dll -I include -o tff.exe
