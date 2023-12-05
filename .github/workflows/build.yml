@@ -95,7 +95,7 @@ jobs:
 
   build_main:
     name: Build Main EXE
-    needs: [build_analyzer, build_compiler, build_interpreter]
+    needs: [build_base, build_analyzer, build_compiler, build_interpreter]
     runs-on: ubuntu-latest
 
     steps:
