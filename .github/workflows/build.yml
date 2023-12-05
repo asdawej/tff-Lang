@@ -14,8 +14,12 @@ jobs:
       - name: Build Base DLL
         run: |
           g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/base/*.cpp src/std/*.cpp -I include -o base.dll
-          mkdir dist
-          mv base.dll dist/
+
+      - name: Upload Base DLL
+        uses: actions/upload-artifact@v2
+        with:
+          name: base
+          path: base.dll
 
   build_analyzer:
     name: Build Analyzer DLL
@@ -26,10 +30,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Download Base DLL
+        uses: actions/download-artifact@v2
+        with:
+          name: base
+
       - name: Build Analyzer DLL
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/analyzer.cpp dist/base.dll -I include -o analyzer.dll
-          mv analyzer.dll dist/
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/analyzer.cpp base.dll -I include -o analyzer.dll
+
+      - name: Upload Analyzer DLL
+        uses: actions/upload-artifact@v2
+        with:
+          name: analyzer
+          path: analyzer.dll
 
   build_compiler:
     name: Build Compiler DLL
@@ -40,10 +54,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Download Base DLL
+        uses: actions/download-artifact@v2
+        with:
+          name: base
+
       - name: Build Compiler DLL
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/compiler.cpp dist/base.dll -I include -o compiler.dll
-          mv compiler.dll dist/
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/compiler.cpp base.dll -I include -o compiler.dll
+
+      - name: Upload Compiler DLL
+        uses: actions/upload-artifact@v2
+        with:
+          name: compiler
+          path: compiler.dll
 
   build_interpreter:
     name: Build Interpreter DLL
@@ -54,10 +78,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Download Base DLL
+        uses: actions/download-artifact@v2
+        with:
+          name: base
+
       - name: Build Interpreter DLL
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/interpreter.cpp dist/base.dll -I include -o interpreter.dll
-          mv interpreter.dll dist/
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic src/interpreter.cpp base.dll -I include -o interpreter.dll
+
+      - name: Upload Interpreter DLL
+        uses: actions/upload-artifact@v2
+        with:
+          name: interpreter
+          path: interpreter.dll
 
   build_main:
     name: Build Main EXE
@@ -68,6 +102,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Download DLLs
+        uses: actions/download-artifact@v2
+        with:
+          name: |
+            base
+            analyzer
+            compiler
+            interpreter
+
       - name: Build Main EXE
         run: |
-          g++ -O3 -std=c++17 -fconcepts -Wall src/main.cpp dist/*.dll -I include -o tff.exe
+          g++ -O3 -std=c++17 -fconcepts -Wall src/main.cpp *.dll -I include -o tff.exe
