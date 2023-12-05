@@ -95,21 +95,32 @@ jobs:
 
   build_main:
     name: Build Main EXE
-    needs: [build_base, build_analyzer, build_compiler, build_interpreter]
+    needs: [build_analyzer, build_compiler, build_interpreter]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Download DLLs
+      - name: Download Base DLL
         uses: actions/download-artifact@v2
         with:
-          name: |
-            base
-            analyzer
-            compiler
-            interpreter
+          name: base
+
+      - name: Download Analyzer DLL
+        uses: actions/download-artifact@v2
+        with:
+          name: analyzer
+
+      - name: Download Compiler DLL
+        uses: actions/download-artifact@v2
+        with:
+          name: compiler
+
+      - name: Download Interpreter DLL
+        uses: actions/download-artifact@v2
+        with:
+          name: interpreter
 
       - name: Build Main EXE
         run: |
