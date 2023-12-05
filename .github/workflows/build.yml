@@ -11,10 +11,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up C++ compiler
-        uses: actions/setup-cpp@v2
-        with:
-          cpp-version: '17'
+      # - name: Set up C++ compiler
+      #   uses: actions/setup-cpp@v2
+      #   with:
+      #     cpp-version: '17'
 
       - name: Build Base DLL
         run: |
@@ -29,10 +29,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up C++ compiler
-        uses: actions/setup-cpp@v2
-        with:
-          cpp-version: '17'
+      # - name: Set up C++ compiler
+      #   uses: actions/setup-cpp@v2
+      #   with:
+      #     cpp-version: '17'
 
       - name: Build Analyzer DLL
         run: |
@@ -47,10 +47,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up C++ compiler
-        uses: actions/setup-cpp@v2
-        with:
-          cpp-version: '17'
+      # - name: Set up C++ compiler
+      #   uses: actions/setup-cpp@v2
+      #   with:
+      #     cpp-version: '17'
 
       - name: Build Compiler DLL
         run: |
@@ -65,10 +65,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up C++ compiler
-        uses: actions/setup-cpp@v2
-        with:
-          cpp-version: '17'
+      # - name: Set up C++ compiler
+      #   uses: actions/setup-cpp@v2
+      #   with:
+      #     cpp-version: '17'
 
       - name: Build Interpreter DLL
         run: |
@@ -83,10 +83,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up C++ compiler
-        uses: actions/setup-cpp@v2
-        with:
-          cpp-version: '17'
+      # - name: Set up C++ compiler
+      #   uses: actions/setup-cpp@v2
+      #   with:
+      #     cpp-version: '17'
 
       - name: Build Main EXE
         run: |
