@@ -1,0 +1,93 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build_base:
+    name: Build Base DLL
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up C++ compiler
+        uses: actions/setup-cxx@v2
+        with:
+          cpp-version: '17'
+
+      - name: Build Base DLL
+        run: |
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic ./src/base/*.cpp .src/std/*.cpp -I ./include -o ./dist/base.dll
+
+  build_analyzer:
+    name: Build Analyzer DLL
+    needs: build_base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up C++ compiler
+        uses: actions/setup-cxx@v2
+        with:
+          cpp-version: '17'
+
+      - name: Build Analyzer DLL
+        run: |
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic ./src/analyzer.cpp ./dist/base.dll -I ./include -o ./dist/analyzer.dll
+
+  build_compiler:
+    name: Build Compiler DLL
+    needs: build_base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up C++ compiler
+        uses: actions/setup-cxx@v2
+        with:
+          cpp-version: '17'
+
+      - name: Build Compiler DLL
+        run: |
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic ./src/compiler.cpp ./dist/base.dll -I ./include -o ./dist/compiler.dll
+
+  build_interpreter:
+    name: Build Interpreter DLL
+    needs: build_base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up C++ compiler
+        uses: actions/setup-cxx@v2
+        with:
+          cpp-version: '17'
+
+      - name: Build Interpreter DLL
+        run: |
+          g++ -O3 -std=c++17 -fconcepts -Wall -shared -fpic ./src/interpreter.cpp ./dist/base.dll -I ./include -o ./dist/interpreter.dll
+
+  build_main:
+    name: Build Main EXE
+    needs: [build_analyzer, build_compiler, build_interpreter]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up C++ compiler
+        uses: actions/setup-cxx@v2
+        with:
+          cpp-version: '17'
+
+      - name: Build Main EXE
+        run: |
+          g++ -O3 -std=c++17 -fconcepts -Wall ./src/main.cpp ./dist/*.dll -I ./include -o ./dist/tff.exe
