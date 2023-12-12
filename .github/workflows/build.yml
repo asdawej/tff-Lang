@@ -125,3 +125,9 @@ jobs:
       - name: Build Main EXE
         run: |
           g++ -O3 -std=c++17 -fconcepts -Wall src/main.cpp *.dll -I include -o tff.exe
+
+      - name: Upload Main EXE
+        uses: actions/upload-artifact@v2
+        with:
+          name: main
+          path: tff.exe
